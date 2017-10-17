@@ -1,6 +1,7 @@
 # ClauToCpp
 ToDo - Convert ClauText to CPP - Not yet..
 
+# GOAL
 # ClauText Code
 
       # Global
