@@ -438,7 +438,7 @@ ToDo - Convert ClauText to CPP - Not yet..
       $assign2 = { dir = { $concat_all = { / . / Pos / row } } value = { $add = { -1 /./Pos/row } } }
     }
     #
-#C++ Code
+# C++ Code
     
 
     // Goal : clautext -> cpp
