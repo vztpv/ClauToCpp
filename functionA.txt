@@ -11,6 +11,8 @@
 
 #define INLINE inline
 
+#define NONE 0
+
 wiz::StringBuilder builder(102400);
 
 INLINE std::string _add(const std::string& s1, const std::string& s2)
@@ -37,7 +39,7 @@ INLINE bool _EQ(const std::string& x, const std::string& y)
 INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& str) {
 	return wiz::load_data::Find(&global, str, &builder);
 } 
-INLINE std::string _concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
+INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
 {
 	std::string result;
 
@@ -47,7 +49,7 @@ INLINE std::string _concat_all(const std::vector<std::string>& vec) // chk for -
 	return result;
 }
 // todo - add ExcuteData parameter?
-INLINE std::string _make(wiz::load_data::UserType& global, const ExcuteData& data, const std::string& str, const std::string& condition)
+INLINE std::string __make(wiz::load_data::UserType& global, const ExcuteData& data, const std::string& str, const std::string& condition)
 {
 	std::string dir = str;
 
@@ -68,7 +70,7 @@ INLINE std::string _make(wiz::load_data::UserType& global, const ExcuteData& dat
 
 	return "";
 }
-INLINE std::string _assign(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, const std::string& dir, const std::string& value, const std::string& condition)
+INLINE std::string __assign(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, const std::string& dir, const std::string& value, const std::string& condition)
 {
 	std::pair<std::string, std::string> _dir = Find2(&global, dir);
 
@@ -83,9 +85,34 @@ INLINE std::string _assign(wiz::load_data::UserType& global, const ExcuteData& e
 	}
 	return "";
 }
-INLINE std::string _insert(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
+INLINE std::string __insert(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
 {
 	wiz::load_data::LoadData::AddData(global, dir, value, condition, excuteData, &builder);
 
 	return "";
 }
+
+template <class T>
+INLINE std::string ToString(const T& data)
+{
+	return _toString(data);
+}
+
+template <>
+INLINE std::string ToString(const std::string& data)
+{
+	return data;
+}
+
+INLINE std::string CONCAT_ALL(const std::vector<std::string>& vec)
+{
+	std::string result;
+
+	for (int i = 0; i < vec.size(); ++i) {
+		result += vec[i];
+		result += " ";
+	}
+
+	return result;
+}
+
