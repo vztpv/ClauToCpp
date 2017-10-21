@@ -1,6 +1,10 @@
 # ClauToCpp
-ToDo - Convert ClauText to CPP - Not yet..
+      Convert ClauText to CPP
 
+# ToDo
+      - $call, $setElement, $assign2, $return_value, $option
+      - snail speed test!
+      
 # GOAL
 # ClauText Code
 
