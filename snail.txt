@@ -19,7 +19,7 @@ Main = { $call = { id = snail } }
 Event = {
 	id = snail
 	
-	$call = { id = init row_max = 200 col_max = 200 }
+	$call = { id = init row_max = 300 col_max = 300 }
 		# _init(200, 200); // row_max, col_max ! but, in clautext, it can be to col_max, row_max
 	
 	#$print = { data = { chk } }
@@ -34,7 +34,7 @@ Event = {
 		
 	#$call = { id = print start_row = 1 start_col = 1 }
 	#$print = { enter ={ \n } }
-	
+		
 	# $call = { id = doing k = 0 }
 		# _doing(0);
 		
@@ -94,7 +94,7 @@ Event = {
 				}
 				then = {
 					$make = { dirName = { $concat_all = {  / . / Arr / _ } } condition = { TRUE } }
-					##$call = { id = init_Arr2 row = $local.i i = 0 size = { $add = { 1 /./COL_MAX } } }
+					$call = { id = init_Arr2 row = $local.i i = 0 size = { $add = { 1 /./COL_MAX } } }
 					$assign = { $local.i value = { $add = { 1 $local.i } } }
 				}
 			}
@@ -127,7 +127,7 @@ Event = {
 			$insert = { dirName = { $concat_all = {  / . / Arr / $ ut $local.row  } } value = { -1 } }
 			$assign = { $local.i value = { $add = { 1 $local.i } } }
 			
-			$print = { data = { "test" } }
+			##$print = { data = { "test" } }
 		}
 	}
 }

@@ -52,7 +52,7 @@ void Do(const wiz::load_data::UserType& someUT, wiz::load_data::UserType& result
 			it_count++;
 		}
 		else {
-			result.AddUserTypeItem(wiz::load_data::UserType(someUT.GetUserTypeList(ut_count)->GetName()));
+			result.AddUserTypeItem(wiz::load_data::UserType(ToStr(someUT.GetUserTypeList(ut_count)->GetName())));
 			result.PushComment("3");
 
 			Do(*someUT.GetUserTypeList(ut_count), *result.GetUserTypeList(ut_count));
@@ -230,7 +230,7 @@ std::string ConvertFunction(wiz::load_data::UserType& _eventUT, wiz::load_data::
 				// for item, item in ut->GetUserTypeList(0), ... 
 				Do(*_ut, _resultUT);
 
-				result += ", CONCAT_ALL(std::vector<std::string>{ " + PrintSomeUT(resultUT) + "})";
+				result += ", CONCAT_ALL(std::vector<std::string>{ " + PrintSomeUT(_resultUT) + "})";
 			}
 			else {
 				result += ", \"TRUE\"";
@@ -345,7 +345,17 @@ std::string ConvertFunction(wiz::load_data::UserType& _eventUT, wiz::load_data::
 					id = func->GetItemList(j).Get(0);
 				}
 				else {
-					param[func->GetItemList(j).GetName()] = "\"" + func->GetItemList(j).Get(0) + "\"";
+					std::string value = func->GetItemList(j).Get(0);
+					wiz::load_data::UserType _ut;
+					wiz::load_data::UserType resultUT;
+
+					wiz::load_data::LoadData::LoadDataFromString(value, _ut);
+					// for item, item in ut->GetUserTypeList(0), ... 
+					Do(_ut, resultUT);
+
+					value = "CONCAT_ALL(std::vector<std::string>{ " + PrintSomeUT(resultUT) + "})";
+
+					param[func->GetItemList(j).GetName()] = value;
 				}
 			}
 			for (int j = 0; j < func->GetUserTypeListSize(); ++j) {
@@ -410,6 +420,34 @@ std::string ConvertFunction(wiz::load_data::UserType& _eventUT, wiz::load_data::
 			}
 			result += "}\n";
 		}
+		else if (functionName == "$make") {
+			std::string condition = "\"TRUE\"";
+
+			result += "__make(*global, excuteData";
+
+			{
+				wiz::load_data::UserType* _ut = eventUT.GetUserTypeList(i)->GetUserTypeList(0);
+				wiz::load_data::UserType _resultUT;
+				// for item, item in ut->GetUserTypeList(0), ... 
+				Do(*_ut, _resultUT);
+
+				result += ", CONCAT_ALL(std::vector<std::string>{ " + PrintSomeUT(_resultUT) + "})";
+			}
+
+			if (eventUT.GetUserTypeList(i)->GetUserTypeListSize() >= 2) {
+				wiz::load_data::UserType* _ut = eventUT.GetUserTypeList(i)->GetUserTypeList(1);
+				wiz::load_data::UserType _resultUT;
+				// for item, item in ut->GetUserTypeList(0), ... 
+				Do(*_ut, _resultUT);
+
+				condition = PrintSomeUT(_resultUT);
+			}
+			
+			result += ", " + condition + ");";
+
+			result += "\n";
+		}
+		
 		// $print is complicated!
 		else if (functionName == "$print") {
 			//// chk! - todo
