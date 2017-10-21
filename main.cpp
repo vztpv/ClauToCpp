@@ -184,15 +184,15 @@ std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr = false, int
 	return result;
 }
 
-std::string ConvertFunction(wiz::load_data::UserType& eventUT, int depth = 1) // , int depth,  for \t!
+std::string ConvertFunction(wiz::load_data::UserType& _eventUT, wiz::load_data::UserType& eventUT, int depth = 1, const std::string& _option="") // , int depth,  for \t!
 {
 	std::string result;
+	std::string option = _option;
 
 	for (int i = 0; i < eventUT.GetUserTypeListSize(); ++i) {
 		const std::string functionName = eventUT.GetUserTypeList(i)->GetName();
 		if (functionName == "$local" ||
-			functionName == "$parameter" ||
-			functionName == "$option")
+			functionName == "$parameter" )
 		{
 			continue;
 		}
@@ -201,7 +201,12 @@ std::string ConvertFunction(wiz::load_data::UserType& eventUT, int depth = 1) //
 			result += "\t";
 		}
 
-		if (functionName == "$assign") {
+
+		if (functionName == "$option")
+		{
+			option = eventUT.GetUserTypeList(i)->ToString();
+		}
+		else if (functionName == "$assign") {
 			result += "__assign(*global, excuteData, locals, \"";
 			result += ToStr(eventUT.GetUserTypeList(i)->GetItemList(0).Get(0));
 			result += "\"";
@@ -246,7 +251,7 @@ std::string ConvertFunction(wiz::load_data::UserType& eventUT, int depth = 1) //
 				result += PrintSomeUT(resultUT, true);
 			}
 			result += ") {\n";
-			result += ConvertFunction(*eventUT.GetUserTypeList(i)->GetUserTypeList(1), depth + 1);
+			result += ConvertFunction(_eventUT, *eventUT.GetUserTypeList(i)->GetUserTypeList(1), depth + 1, option);
 			result += "\n";
 			for (int i = 0; i < depth; ++i) {
 				result += "\t";
@@ -265,7 +270,7 @@ std::string ConvertFunction(wiz::load_data::UserType& eventUT, int depth = 1) //
 			}
 
 			result += ") {\n";
-			result += ConvertFunction(*eventUT.GetUserTypeList(i)->GetUserTypeList(1), depth + 1);
+			result += ConvertFunction(_eventUT, *eventUT.GetUserTypeList(i)->GetUserTypeList(1), depth + 1, option);
 			result += "\n";
 			for (int i = 0; i < depth; ++i) {
 				result += "\t";
@@ -274,7 +279,7 @@ std::string ConvertFunction(wiz::load_data::UserType& eventUT, int depth = 1) //
 		}
 		else if (functionName == "$else") {
 			result += "else {\n";
-			result += ConvertFunction(*eventUT.GetUserTypeList(i)->GetUserTypeList(0), depth + 1);
+			result += ConvertFunction(_eventUT, *eventUT.GetUserTypeList(i)->GetUserTypeList(0), depth + 1, option);
 			result += "\n";
 			for (int i = 0; i < depth; ++i) {
 				result += "\t";
@@ -328,9 +333,82 @@ std::string ConvertFunction(wiz::load_data::UserType& eventUT, int depth = 1) //
 		}
 		else if (functionName == "$call") {
 			// todo!
+			// itemtype, usertype...
 			// chk parameter!
 			// chk event?
+			wiz::load_data::UserType* func = eventUT.GetUserTypeList(i);
+			std::string id;
+			std::map<std::string, std::string> param;
+
+			for (int j = 0; j < func->GetItemListSize(); ++j) {
+				if ("id" == func->GetItemList(j).GetName()) {
+					id = func->GetItemList(j).Get(0);
+				}
+				else {
+					param[func->GetItemList(j).GetName()] = "\"" + func->GetItemList(j).Get(0) + "\"";
+				}
+			}
+			for (int j = 0; j < func->GetUserTypeListSize(); ++j) {
+				if ("id" == func->GetUserTypeList(j)->GetName()) {
+					wiz::load_data::UserType* ut = func->GetUserTypeList(j);
+					wiz::load_data::UserType resultUT;
+					// for item, item in ut->GetUserTypeList(0), ... 
+					Do(*ut, resultUT);
+
+					id = PrintSomeUT(resultUT);
+				}
+				else {
+					wiz::load_data::UserType* ut = func->GetUserTypeList(j);
+					wiz::load_data::UserType resultUT;
+					// for item, item in ut->GetUserTypeList(0), ... 
+					Do(*ut, resultUT);
+
+					param[ut->GetName()] = PrintSomeUT(resultUT);
+				}
+			}
+
+			result += "{\n";
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "std::map<std::string, std::string> param;\n";
+			for (const auto&x : param) {
+				for (int i = 0; i < depth + 1; ++i) {
+					result += "\t";
+				}
+				result += "param[\"" + x.first + "\"] = " + x.second + ";\n";
+			}
+
 			result += "\n";
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "__";
+			result += id;
+			result += "(global, excuteData, param);";
+			result += "\n";
+
+
+			if ("REMOVE_IF_CALL_ONESELF_EVENT" == option && _eventUT.GetItem("id")[0].Get(0) == id)
+			{
+				for (int i = 0; i < depth; ++i) {
+					result += "\t";
+				}
+				result += "return result;\n";
+			}
+			else if ("REMOVE_IF_CALL_ANY_EVENT" == option)
+			{
+				for (int i = 0; i < depth; ++i) {
+					result += "\t";
+				}
+				result += "return result;\n";
+			}
+
+			for (int i = 0; i < depth; ++i) {
+				result += "\t";
+			}
+			result += "}\n";
 		}
 		// $print is complicated!
 		else if (functionName == "$print") {
@@ -441,7 +519,8 @@ int main(int argc, char* argv[])
 				outFile << ")" << "\n"
 				<< "{\n"
 				<< "\tstd::map<std::string, std::string> locals;\n"
-				<< "\tstd::string result;\n\n";
+				<< "\tstd::string result;\n"
+				<< "\tstd::string option;\n\n";
 
 				// set locals
 				{
@@ -454,7 +533,7 @@ int main(int argc, char* argv[])
 				}
 				// convertedFunction = ConvertFunction(*global, ut, excutedata, locals, parameters);
 					// $local = { }, $option = { } $parameter = { } => pass!
-				outFile << "\n" << ConvertFunction(*EventUT[i]) << "\n";
+				outFile << "\n" << ConvertFunction(*EventUT[i], *EventUT[i]) << "\n";
 				outFile << "\treturn result;\n";
 				outFile << "}\n";
  			}
