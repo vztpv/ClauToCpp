@@ -15,30 +15,37 @@
 
 wiz::StringBuilder builder(102400);
 
-INLINE std::string _add(const std::string& s1, const std::string& s2)
+INLINE std::string __add(const std::string& s1, const std::string& s2)
 {
 	return std::to_string(std::stoi(s1) + std::stoi(s2)); // change to int, double, ..
 }
-INLINE bool _COMP_LT_EQ(const std::string& s1, const std::string& s2)
+INLINE bool __COMP_LT_EQ(const std::string& s1, const std::string& s2)
 {
-	return wiz::load_data::Utility::Compare(s1, s2, &builder) == "< 0";
+	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
+	return x == "== 0" || x == "< 0";
 }
-INLINE bool _OR(const bool x, const bool y)
+INLINE bool __COMP_GT_EQ(const std::string& s1, const std::string& s2)
+{
+	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
+	return x == "== 0" || x == "> 0";
+}
+
+INLINE bool __OR(const bool x, const bool y)
 {
 	return x || y;
 }
-INLINE bool _AND(const bool x, const bool y)
+INLINE bool __AND(const bool x, const bool y)
 {
 	return x && y;
 }
-INLINE bool _EQ(const std::string& x, const std::string& y)
+INLINE bool __EQ(const std::string& x, const std::string& y)
 {
-	return x == y;
+	return wiz::load_data::Utility::Compare(x, y, &builder) == "== 0";
 }
 // find "/~"
 INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& str) {
 	return wiz::load_data::Find(&global, str, &builder);
-} 
+}
 INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
 {
 	std::string result;
@@ -79,7 +86,7 @@ INLINE std::string __assign(wiz::load_data::UserType& global, const ExcuteData& 
 	{
 		locals[wiz::String::substring(_dir.second, 7)] = value;
 	}
-	else 
+	else
 	{
 		wiz::load_data::LoadData::SetData(global, _dir.first, _dir.second, value, condition, excuteData, &builder);
 	}
@@ -104,15 +111,62 @@ INLINE std::string ToString(const std::string& data)
 	return data;
 }
 
+
 INLINE std::string CONCAT_ALL(const std::vector<std::string>& vec)
 {
 	std::string result;
 
 	for (int i = 0; i < vec.size(); ++i) {
 		result += vec[i];
-		result += " ";
+		if (i < vec.size() - 1) {
+			result += " ";
+		}
 	}
 
 	return result;
+}
+
+INLINE bool __NOTEQ(const std::string x, const std::string y)
+{
+	return !(wiz::load_data::Utility::Compare(x, y, &builder) == "== 0");
+}
+
+INLINE bool __AND_ALL(const std::vector<bool>& vec)
+{
+	bool result = true;
+
+	for(int i=0; i < vec.size(); ++i) {
+		result = result && vec[i];
+		if( vec[i] == false ) {
+			break;
+		}
+	}
+
+	return result;
+}
+
+INLINE bool __COMP_GT_(const std::string& x, const std::string& y)
+{
+	return wiz::load_data::Utility::Compare(x, y, &builder) == "> 0";
+}
+INLINE bool __COMP_LT_(const std::string& x, const std::string& y)
+{
+	return wiz::load_data::Utility::Compare(x, y, &builder) == "< 0";
+}
+
+#define __return_value() result 
+
+INLINE std::string __element(wiz::load_data::UserType& global, const std::string& dir, const std::string& idx_str) {
+	int idx = atoi(idx_str.c_str());
+
+	if ('/' == dir[0])
+	{
+		wiz::load_data::UserType* ut = wiz::load_data::UserType::Find(&global, dir, &builder).second[0];
+		return ut->GetItemList(idx).Get(0);
+	}
+	else
+	{
+		return "NONE";
+	}
 }
 

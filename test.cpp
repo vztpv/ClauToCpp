@@ -15,30 +15,37 @@
 
 wiz::StringBuilder builder(102400);
 
-INLINE std::string _add(const std::string& s1, const std::string& s2)
+INLINE std::string __add(const std::string& s1, const std::string& s2)
 {
 	return std::to_string(std::stoi(s1) + std::stoi(s2)); // change to int, double, ..
 }
-INLINE bool _COMP_LT_EQ(const std::string& s1, const std::string& s2)
+INLINE bool __COMP_LT_EQ(const std::string& s1, const std::string& s2)
 {
-	return wiz::load_data::Utility::Compare(s1, s2, &builder) == "< 0";
+	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
+	return x == "== 0" || x == "< 0";
 }
-INLINE bool _OR(const bool x, const bool y)
+INLINE bool __COMP_GT_EQ(const std::string& s1, const std::string& s2)
+{
+	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
+	return x == "== 0" || x == "> 0";
+}
+
+INLINE bool __OR(const bool x, const bool y)
 {
 	return x || y;
 }
-INLINE bool _AND(const bool x, const bool y)
+INLINE bool __AND(const bool x, const bool y)
 {
 	return x && y;
 }
-INLINE bool _EQ(const std::string& x, const std::string& y)
+INLINE bool __EQ(const std::string& x, const std::string& y)
 {
-	return x == y;
+	return wiz::load_data::Utility::Compare(x, y, &builder) == "== 0";
 }
 // find "/~"
 INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& str) {
 	return wiz::load_data::Find(&global, str, &builder);
-} 
+}
 INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
 {
 	std::string result;
@@ -79,7 +86,7 @@ INLINE std::string __assign(wiz::load_data::UserType& global, const ExcuteData& 
 	{
 		locals[wiz::String::substring(_dir.second, 7)] = value;
 	}
-	else 
+	else
 	{
 		wiz::load_data::LoadData::SetData(global, _dir.first, _dir.second, value, condition, excuteData, &builder);
 	}
@@ -104,190 +111,62 @@ INLINE std::string ToString(const std::string& data)
 	return data;
 }
 
+
 INLINE std::string CONCAT_ALL(const std::vector<std::string>& vec)
 {
 	std::string result;
 
 	for (int i = 0; i < vec.size(); ++i) {
 		result += vec[i];
-		result += " ";
+		if (i < vec.size() - 1) {
+			result += " ";
+		}
 	}
 
 	return result;
 }
 
-INLINE std::string __snail(wiz::load_data::UserType* global, ExcuteData& excuteData);
-INLINE std::string __init(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __init_Arr(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __init_Arr2(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __init_Arr3(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __print(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __canMoveRight(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __canMoveDown(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __canMoveLeft(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __canMoveUp(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __moveRight(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __moveDown(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __moveLeft(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-INLINE std::string __moveUp(wiz::load_data::UserType* global, ExcuteData& ExcuteData, std::map<std::string, std::string>& parameters);
-
-int main(void)
+INLINE bool __NOTEQ(const std::string x, const std::string y)
 {
-	ExcuteData excuteData;
-	wiz::load_data::UserType global;
-	std::string data =
-	"COUNT = 0 ROW_MAX = 0 COL_MAX = 0 Pos =  { row = 1 col = 1  } value = 1";
-	wiz::load_data::LoadData::LoadDataFromString(data, global);
-	std::cout << __snail(&global, excuteData) << std::endl;
-	return 0;
+	return !(wiz::load_data::Utility::Compare(x, y, &builder) == "== 0");
 }
 
-INLINE std::string __snail(wiz::load_data::UserType* global, ExcuteData& excuteData)
+INLINE bool __AND_ALL(const std::vector<bool>& vec)
 {
-	std::map<std::string, std::string> locals;
-	std::string result;
+	bool result = true;
 
-
-
-}
-INLINE std::string __init(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-	__assign(*global, excuteData, locals, "/./ROW_MAX", CONCAT_ALL(std::vector<std::string>{ parameters["row_max"]}), "TRUE");
-	__assign(*global, excuteData, locals, "/./COL_MAX", CONCAT_ALL(std::vector<std::string>{ parameters["col_max"]}), "TRUE");
-
-}
-INLINE std::string __init_Arr(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-	locals["i"] = "";
-
-	__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ parameters["i"]}), "TRUE");
-	while("TRUE" == CONCAT_ALL(std::vector<std::string>{ __$COMP<EQ(locals["i"] , __$add("1"  , _Find(*global, "/./ROW_MAX")))}) ? true : false) {
-	
+	for(int i=0; i < vec.size(); ++i) {
+		result = result && vec[i];
+		if( vec[i] == false ) {
+			break;
+		}
 	}
 
+	return result;
 }
-INLINE std::string __init_Arr2(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
+
+INLINE bool __COMP_GT_(const std::string& x, const std::string& y)
 {
-	std::map<std::string, std::string> locals;
-	std::string result;
+	return wiz::load_data::Utility::Compare(x, y, &builder) == "> 0";
+}
+INLINE bool __COMP_LT_(const std::string& x, const std::string& y)
+{
+	return wiz::load_data::Utility::Compare(x, y, &builder) == "< 0";
+}
 
-	locals["row"] = "";
-	locals["i"] = "";
-	locals["size"] = "";
+#define __return_value() result 
 
-	__assign(*global, excuteData, locals, "$local.row", CONCAT_ALL(std::vector<std::string>{ parameters["row"]}), "TRUE");
-	__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ parameters["i"]}), "TRUE");
-	__assign(*global, excuteData, locals, "$local.size", CONCAT_ALL(std::vector<std::string>{ parameters["size"]}), "TRUE");
-	while("TRUE" == CONCAT_ALL(std::vector<std::string>{ __$COMP<EQ(locals["i"] , locals["size"])}) ? true : false) {
-		__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ __$add("1"  , locals["i"])}), "TRUE");
+INLINE std::string __element(wiz::load_data::UserType& global, const std::string& dir, const std::string& idx_str) {
+	int idx = atoi(idx_str.c_str());
 
+	if ('/' == dir[0])
+	{
+		wiz::load_data::UserType* ut = wiz::load_data::UserType::Find(&global, dir, &builder).second[0];
+		return ut->GetItemList(idx).Get(0);
 	}
-
-}
-INLINE std::string __init_Arr3(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-	locals["row"] = "";
-	locals["i"] = "";
-	locals["size"] = "";
-
-	__assign(*global, excuteData, locals, "$local.row", CONCAT_ALL(std::vector<std::string>{ parameters["row"]}), "TRUE");
-	__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ parameters["i"]}), "TRUE");
-	__assign(*global, excuteData, locals, "$local.size", CONCAT_ALL(std::vector<std::string>{ parameters["size"]}), "TRUE");
-	while("TRUE" == CONCAT_ALL(std::vector<std::string>{ __$COMP<EQ(locals["i"] , locals["size"])}) ? true : false) {
-	
+	else
+	{
+		return "NONE";
 	}
-
 }
-INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
 
-	locals["x"] = "";
-
-	__assign(*global, excuteData, locals, "$local.x", CONCAT_ALL(std::vector<std::string>{ parameters["k"]}), "TRUE");
-
-}
-INLINE std::string __print(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __canMoveRight(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __canMoveDown(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __canMoveLeft(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __canMoveUp(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __moveRight(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __moveDown(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __moveLeft(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}
-INLINE std::string __moveUp(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
-{
-	std::map<std::string, std::string> locals;
-	std::string result;
-
-
-
-}

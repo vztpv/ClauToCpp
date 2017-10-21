@@ -126,6 +126,8 @@ Event = {
 		then = {
 			$insert = { dirName = { $concat_all = {  / . / Arr / $ ut $local.row  } } value = { -1 } }
 			$assign = { $local.i value = { $add = { 1 $local.i } } }
+			
+			$print = { data = { "test" } }
 		}
 	}
 }
