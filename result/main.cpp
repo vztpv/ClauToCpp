@@ -194,6 +194,8 @@ int main(void)
 		"COUNT = 0 ROW_MAX = 0 COL_MAX = 0 Pos =  { row = 1 col = 1  } value = 1";
 	wiz::load_data::LoadData::LoadDataFromString(data, global);
 	std::cout << __snail(&global, excuteData) << std::endl;
+
+	
 	return 0;
 }
 
@@ -206,8 +208,8 @@ INLINE std::string __snail(wiz::load_data::UserType* global, ExcuteData& excuteD
 
 	{
 		std::map<std::string, std::string> param;
-		param["col_max"] = "300";
-		param["row_max"] = "300";
+		param["col_max"] = CONCAT_ALL(std::vector<std::string>{ "300" });
+		param["row_max"] = CONCAT_ALL(std::vector<std::string>{ "300" });
 
 		__init(global, excuteData, param);
 	}
@@ -221,11 +223,12 @@ INLINE std::string __init(wiz::load_data::UserType* global, ExcuteData& excuteDa
 	std::string option;
 
 
+	__make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __concat_all(std::vector<std::string>{ "/", ".", "/", "Arr" })}), "TRUE");
 	__assign(*global, excuteData, locals, "/./ROW_MAX", CONCAT_ALL(std::vector<std::string>{ parameters["row_max"]}), "TRUE");
 	__assign(*global, excuteData, locals, "/./COL_MAX", CONCAT_ALL(std::vector<std::string>{ parameters["col_max"]}), "TRUE");
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = "0";
+		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0" });
 
 		__init_Arr(global, excuteData, param);
 	}
@@ -243,14 +246,24 @@ INLINE std::string __init_Arr(wiz::load_data::UserType* global, ExcuteData& excu
 	__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ parameters["i"]}), "TRUE");
 	while (__COMP_LT_EQ(locals["i"], __add("1", _Find(*global, "/./ROW_MAX")))) {
 		if (__OR(__EQ("0", locals["i"]), __EQ(__add("1", _Find(*global, "/./ROW_MAX")), locals["i"]))) {
+			__make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __concat_all(std::vector<std::string>{ "/", ".", "/", "Arr", "/", "_" })}), "TRUE");
+			{
+				std::map<std::string, std::string> param;
+				param["i"] = CONCAT_ALL(std::vector<std::string>{ "0" });
+				param["row"] = CONCAT_ALL(std::vector<std::string>{ locals["i"]});
+				param["size"] = __add("1", _Find(*global, "/./COL_MAX"));
+
+				__init_Arr2(global, excuteData, param);
+			}
 			__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ __add("1", locals["i"])}), "TRUE");
 
 		}
 		else {
+			__make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __concat_all(std::vector<std::string>{ "/", ".", "/", "Arr", "/", "_" })}), "TRUE");
 			{
 				std::map<std::string, std::string> param;
-				param["i"] = "0";
-				param["row"] = "$local.i";
+				param["i"] = CONCAT_ALL(std::vector<std::string>{ "0" });
+				param["row"] = CONCAT_ALL(std::vector<std::string>{ locals["i"]});
 				param["size"] = __add("1", _Find(*global, "/./COL_MAX"));
 
 				__init_Arr3(global, excuteData, param);
@@ -279,7 +292,6 @@ INLINE std::string __init_Arr2(wiz::load_data::UserType* global, ExcuteData& exc
 	while (__COMP_LT_EQ(locals["i"], locals["size"])) {
 		__insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __concat_all(std::vector<std::string>{ "/", ".", "/", "Arr", "/", "$", "ut", locals["row"]})}), CONCAT_ALL(std::vector<std::string>{ "-1" }), "TRUE");
 		__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ __add("1", locals["i"])}), "TRUE");
-
 
 	}
 
@@ -337,7 +349,7 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 			}
 			{
 				std::map<std::string, std::string> param;
-				param["k"] = "$local.x";
+				param["k"] = CONCAT_ALL(std::vector<std::string>{ locals["x"]});
 
 				__doing(global, excuteData, param);
 				return result;
@@ -364,7 +376,7 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 			}
 			{
 				std::map<std::string, std::string> param;
-				param["k"] = "$local.x";
+				param["k"] = CONCAT_ALL(std::vector<std::string>{ locals["x"]});
 
 				__doing(global, excuteData, param);
 				return result;
@@ -391,7 +403,7 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 			}
 			{
 				std::map<std::string, std::string> param;
-				param["k"] = "$local.x";
+				param["k"] = CONCAT_ALL(std::vector<std::string>{ locals["x"]});
 
 				__doing(global, excuteData, param);
 				return result;
@@ -418,7 +430,7 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 			}
 			{
 				std::map<std::string, std::string> param;
-				param["k"] = "$local.x";
+				param["k"] = CONCAT_ALL(std::vector<std::string>{ locals["x"]});
 
 				__doing(global, excuteData, param);
 				return result;
@@ -435,7 +447,7 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 			if (("TRUE" == __return_value())) {
 				{
 					std::map<std::string, std::string> param;
-					param["k"] = "$local.x";
+					param["k"] = CONCAT_ALL(std::vector<std::string>{ locals["x"]});
 
 					__doing(global, excuteData, param);
 					return result;
@@ -479,7 +491,7 @@ INLINE std::string __print(wiz::load_data::UserType* global, ExcuteData& excuteD
 
 		{
 			std::map<std::string, std::string> param;
-			param["start_col"] = "1";
+			param["start_col"] = CONCAT_ALL(std::vector<std::string>{ "1" });
 			param["start_row"] = __add("1", parameters["start_row"]);
 
 			__print(global, excuteData, param);
