@@ -201,9 +201,16 @@ INLINE std::string __snail(wiz::load_data::UserType* global, ExcuteData& excuteD
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
+	{
+		std::map<std::string, std::string> param;
+		param["col_max"] = "300";
+		param["row_max"] = "300";
 
+		__init(global, excuteData, param);
+	}
 
 	return result;
 }
@@ -211,11 +218,17 @@ INLINE std::string __init(wiz::load_data::UserType* global, ExcuteData& excuteDa
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 	__assign(*global, excuteData, locals, "/./ROW_MAX", CONCAT_ALL(std::vector<std::string>{ parameters["row_max"]}), "TRUE");
 	__assign(*global, excuteData, locals, "/./COL_MAX", CONCAT_ALL(std::vector<std::string>{ parameters["col_max"]}), "TRUE");
+	{
+		std::map<std::string, std::string> param;
+		param["i"] = "0";
 
+		__init_Arr(global, excuteData, param);
+	}
 
 	return result;
 }
@@ -223,6 +236,7 @@ INLINE std::string __init_Arr(wiz::load_data::UserType* global, ExcuteData& excu
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 	locals["i"] = "";
 
@@ -233,7 +247,14 @@ INLINE std::string __init_Arr(wiz::load_data::UserType* global, ExcuteData& excu
 
 		}
 		else {
+			{
+				std::map<std::string, std::string> param;
+				param["i"] = "0";
+				param["row"] = "$local.i";
+				param["size"] = __add("1", _Find(*global, "/./COL_MAX"));
 
+				__init_Arr3(global, excuteData, param);
+			}
 			__assign(*global, excuteData, locals, "$local.i", CONCAT_ALL(std::vector<std::string>{ __add("1", locals["i"])}), "TRUE");
 
 		}
@@ -246,6 +267,7 @@ INLINE std::string __init_Arr2(wiz::load_data::UserType* global, ExcuteData& exc
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 	locals["row"] = "";
 	locals["i"] = "";
@@ -267,6 +289,7 @@ INLINE std::string __init_Arr3(wiz::load_data::UserType* global, ExcuteData& exc
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 	locals["row"] = "";
 	locals["i"] = "";
@@ -295,15 +318,30 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 	locals["x"] = "";
 
 	__assign(*global, excuteData, locals, "$local.x", CONCAT_ALL(std::vector<std::string>{ parameters["k"]}), "TRUE");
 	if (__EQ(locals["x"], "0")) {
+		{
+			std::map<std::string, std::string> param;
 
+			__canMoveRight(global, excuteData, param);
+		}
 		if (("TRUE" == __return_value())) {
+			{
+				std::map<std::string, std::string> param;
 
+				__moveRight(global, excuteData, param);
+			}
+			{
+				std::map<std::string, std::string> param;
+				param["k"] = "$local.x";
 
+				__doing(global, excuteData, param);
+				return result;
+			}
 
 		}
 		else {
@@ -313,10 +351,24 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 
 	}
 	if (__EQ("1", locals["x"])) {
+		{
+			std::map<std::string, std::string> param;
 
+			__canMoveDown(global, excuteData, param);
+		}
 		if (("TRUE" == __return_value())) {
+			{
+				std::map<std::string, std::string> param;
 
+				__moveDown(global, excuteData, param);
+			}
+			{
+				std::map<std::string, std::string> param;
+				param["k"] = "$local.x";
 
+				__doing(global, excuteData, param);
+				return result;
+			}
 
 		}
 		else {
@@ -326,10 +378,24 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 
 	}
 	if (__EQ("2", locals["x"])) {
+		{
+			std::map<std::string, std::string> param;
 
+			__canMoveLeft(global, excuteData, param);
+		}
 		if (("TRUE" == __return_value())) {
+			{
+				std::map<std::string, std::string> param;
 
+				__moveLeft(global, excuteData, param);
+			}
+			{
+				std::map<std::string, std::string> param;
+				param["k"] = "$local.x";
 
+				__doing(global, excuteData, param);
+				return result;
+			}
 
 		}
 		else {
@@ -339,17 +405,41 @@ INLINE std::string __doing(wiz::load_data::UserType* global, ExcuteData& excuteD
 
 	}
 	if (__EQ("3", locals["x"])) {
+		{
+			std::map<std::string, std::string> param;
 
+			__canMoveUp(global, excuteData, param);
+		}
 		if (("TRUE" == __return_value())) {
+			{
+				std::map<std::string, std::string> param;
 
+				__moveUp(global, excuteData, param);
+			}
+			{
+				std::map<std::string, std::string> param;
+				param["k"] = "$local.x";
 
+				__doing(global, excuteData, param);
+				return result;
+			}
 
 		}
 		else {
 			__assign(*global, excuteData, locals, "$local.x", CONCAT_ALL(std::vector<std::string>{ "0" }), "TRUE");
+			{
+				std::map<std::string, std::string> param;
 
+				__canMoveRight(global, excuteData, param);
+			}
 			if (("TRUE" == __return_value())) {
+				{
+					std::map<std::string, std::string> param;
+					param["k"] = "$local.x";
 
+					__doing(global, excuteData, param);
+					return result;
+				}
 
 			}
 			else {
@@ -366,6 +456,7 @@ INLINE std::string __print(wiz::load_data::UserType* global, ExcuteData& excuteD
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 	if (__AND(__COMP_GT_(parameters["start_row"], _Find(*global, "/./ROW_MAX")), __COMP_GT_EQ(parameters["start_col"], _Find(*global, "/./COL_MAX")))) {
@@ -374,12 +465,26 @@ INLINE std::string __print(wiz::load_data::UserType* global, ExcuteData& excuteD
 	if (__COMP_LT_EQ(parameters["start_col"], _Find(*global, "/./COL_MAX"))) {
 
 
+		{
+			std::map<std::string, std::string> param;
+			param["start_col"] = __add("1", parameters["start_col"]);
+			param["start_row"] = parameters["start_row"];
 
+			__print(global, excuteData, param);
+			return result;
+		}
 
 	}
 	if (__COMP_LT_(parameters["start_row"], _Find(*global, "/./ROW_MAX"))) {
 
+		{
+			std::map<std::string, std::string> param;
+			param["start_col"] = "1";
+			param["start_row"] = __add("1", parameters["start_row"]);
 
+			__print(global, excuteData, param);
+			return result;
+		}
 
 	}
 
@@ -389,6 +494,7 @@ INLINE std::string __canMoveRight(wiz::load_data::UserType* global, ExcuteData& 
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 	if (__AND_ALL(std::vector<bool>{__EQ("0", __element(*global, __concat_all(std::vector<std::string>{ "/", ".", "/", "Arr", "/", "$", "ut", _Find(*global, "/./Pos/row")}), __add("1", _Find(*global, "/./Pos/col")))), __NOTEQ("0", __element(*global, __concat_all(std::vector<std::string>{ "/", ".", "/", "Arr", "/", "$", "ut", __add("-1", _Find(*global, "/./Pos/row"))}), _Find(*global, "/./Pos/col")))})) {
@@ -401,6 +507,7 @@ INLINE std::string __canMoveDown(wiz::load_data::UserType* global, ExcuteData& e
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 	if (__AND_ALL(std::vector<bool>{__EQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", __add("1", _Find(*global, "/./Pos/row"))}), _Find(*global, "/./Pos/col"))), __NOTEQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", __add("-1", _Find(*global, "/./Pos/row"))}), _Find(*global, "/./Pos/col"))), __NOTEQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", _Find(*global, "/./Pos/row")}), __add("1", _Find(*global, "/./Pos/col"))))})) {
@@ -413,6 +520,7 @@ INLINE std::string __canMoveLeft(wiz::load_data::UserType* global, ExcuteData& e
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 	if (__EQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", __add("-1", _Find(*global, "/./Pos/row"))}), __add("-1", _Find(*global, "/./Pos/col"))))) {
@@ -425,6 +533,7 @@ INLINE std::string __canMoveUp(wiz::load_data::UserType* global, ExcuteData& exc
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 	if (__AND(__EQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", __add("-1", _Find(*global, "/./Pos/row"))}), _Find(*global, "/./Pos/col"))), __AND(__NOTEQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", __add("1", _Find(*global, "/./Pos/row"))}), _Find(*global, "/./Pos/col"))), __NOTEQ("0", __element(*global, __concat_all(std::vector<std::string>{ _Find(*global, "/."), "/", "Arr", "/", "$", "ut", _Find(*global, "/./Pos/row")}), __add("-1", _Find(*global, "/./Pos/col"))))))) {
@@ -437,6 +546,7 @@ INLINE std::string __moveRight(wiz::load_data::UserType* global, ExcuteData& exc
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 
@@ -446,6 +556,7 @@ INLINE std::string __moveDown(wiz::load_data::UserType* global, ExcuteData& excu
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 
@@ -455,6 +566,7 @@ INLINE std::string __moveLeft(wiz::load_data::UserType* global, ExcuteData& excu
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 
@@ -464,6 +576,7 @@ INLINE std::string __moveUp(wiz::load_data::UserType* global, ExcuteData& excute
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
+	std::string option;
 
 
 
