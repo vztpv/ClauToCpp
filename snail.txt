@@ -29,13 +29,13 @@ Event = {
 	#$print = { enter = { \n } }
 		# cout << '\n';
 		
-	# $setElement = { dir = { $concat_all = { / . / Arr / $ ut1 } } idx = { 1 } val = { 1 } }
+	$setElement = { dir = { $concat_all = { / . / Arr / $ ut1 } } idx = { 1 } val = { 1 } }
 		# _setElement(_concat_all(vector<string>{"/", ".", "/", "Arr", "/", "$", "ut1"}), 1, 1);
 		
 	#$call = { id = print start_row = 1 start_col = 1 }
 	#$print = { enter ={ \n } }
 		
-	# $call = { id = doing k = 0 }
+	$call = { id = doing k = 0 }
 		# _doing(0);
 		
 	##$call = { id = print start_row = 1 start_col = 1 }

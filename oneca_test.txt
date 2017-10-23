@@ -109,7 +109,7 @@ CardStringImage =
 }
 Event = 
 {
-	// $name
+	#// $name
 	id = 100
 
 	$parameter = { sha num isBlackJoker isColorJoker }
@@ -499,9 +499,9 @@ Event = {
 	$assign = { $local.New value = { $element = { /FunctionNo $parameter.card } } }
 
 
-	$call = { id = 1005 Old_num = { $local.Old_num } New_num = { $local.New_num }  
-						Old_sha = { $local.Old_sha } New_sha = { $local.New_sha }  
-				Old = { $local.Old }  New = { $local.New }  Mode = { $parameter.mode }
+	$call = { id = 1005 Old_num =  $local.Old_num  New_num =  $local.New_num 
+						Old_sha = $local.Old_sha  New_sha =  $local.New_sha   
+				Old = $local.Old New = { $local.New }  Mode = $parameter.mode
 	}
 
 	$return = { $return_value = { } }
@@ -690,7 +690,7 @@ Event =
 {
 	id = 1100
 
-	$insert2 = { dir = { /State } value = { mode = { /Mode/GENERAL_MODE } } } ## why cf) mode = /Mode/GENEREAL_MODE
+	$insert2 = { dir = { /State } value = { mode = /Mode/GENERAL_MODE } } ## why cf) mode = /Mode/GENEREAL_MODE
 	# add action_state = NONE EAT PUT
 	$insert2 = { dir = { /State } value = { action_state = NONE } }
 	$insert2 = { dir = { /State } value = { action_card = NONE } }
@@ -899,7 +899,7 @@ Event =
 
 			 # // test
 			$call = { id = 1001 }
-			$call = { id = 1006  put_card = 0 card = 0 mode = { /Mode/GENERAL_MODE  } }
+			$call = { id = 1006  put_card = 0 card = 0 mode = /Mode/GENERAL_MODE  }
 			$assign = { $local.result value = { $return_value = { } } }
 			$print = { value = { $local.result } }
 			 #//~test
@@ -988,7 +988,7 @@ Event = {
 			$if = {
 				$condition = { $EQ = { FALSE $return_value = { } } }
 				$then =  {
-					// for person!
+					#// for person!
 					$return = { /State/mode }
 				}
 			}
@@ -1112,6 +1112,7 @@ Event =
 	id = 4015
 
 	$local = { index card }
+	$local = { index card }
 	
 	$if = {
 		$condition = { $COMP< = { 0 $size = { $concat = { /PlayerCardList
@@ -1182,8 +1183,8 @@ Event =
 	}
 	$assign = { $local.card value = { $pop_back = { /CardList } } }
 	$insert2 = {
-		 dir = { $concat = { /PlayerCardList $concat = { / $add ={ /Turn/now -1 } } } } 
-  		 value = { $local.card  } 
+		dir = { $concat = { /PlayerCardList $concat = { / $add ={ /Turn/now -1 } } } } 
+  		value = { $local.card  } 
 	}
 }
 Event =
@@ -1202,7 +1203,7 @@ Event =
 	}
 	
 	$if = {
-		$condition = { $NOTEQ = { $local.select $rand = { 1 3 } } } // fail 
+		$condition = { $NOTEQ = { $local.select $rand = { 1 3 } } } #// fail 
 		$then = { 
 			$call = { id = 4013 i= 0 n = /Info/ONE_CARD_FAIL_CARD_NUM }
 			# chk error - todo.. 

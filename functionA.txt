@@ -19,6 +19,18 @@ INLINE std::string __add(const std::string& s1, const std::string& s2)
 {
 	return std::to_string(std::stoi(s1) + std::stoi(s2)); // change to int, double, ..
 }
+
+INLINE std::string __divide(const std::string& s1, const std::string& s2) 
+{
+	return wiz::_toString(std::stoi(s1) / std::stoi(s2));
+}
+
+INLINE std::string __modular(const std::string& s1, const std::string& s2)
+{
+	return wiz::_toString(std::stoi(s1) % std::stoi(s2));
+}
+
+
 INLINE bool __COMP_LT_EQ(const std::string& s1, const std::string& s2)
 {
 	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
@@ -44,7 +56,13 @@ INLINE bool __EQ(const std::string& x, const std::string& y)
 }
 // find "/~"
 INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& str) {
-	return wiz::load_data::Find(&global, str, &builder);
+	std::string temp = wiz::load_data::Find(&global, str, &builder);
+	if (temp.empty()) {
+		return str; //throw temp; // chk std::pair<bool, std::string>
+	}
+	else {
+		return temp;
+	}
 }
 INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
 {
@@ -55,6 +73,11 @@ INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for 
 	}
 	return result;
 }
+INLINE std::string __concat(const std::string& str1, const std::string& str2)
+{
+	return str1 + str2;
+}
+
 // todo - add ExcuteData parameter?
 INLINE std::string __make(wiz::load_data::UserType& global, const ExcuteData& data, const std::string& str, const std::string& condition)
 {
@@ -92,6 +115,26 @@ INLINE std::string __assign(wiz::load_data::UserType& global, const ExcuteData& 
 	}
 	return "";
 }
+
+INLINE std::string __assign2(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, 
+	const std::string& _dir, const std::string& value, const std::string& condition)
+{
+	std::pair<std::string, std::string> dir = Find2(&global, _dir);
+
+	{
+		if (dir.first == "" && wiz::String::startsWith(dir.second, "$local."))
+		{
+			locals[wiz::String::substring(dir.second, 7)] = value;
+		}
+		else {
+			wiz::load_data::LoadData::SetData(global, dir.first, dir.second, value, "TRUE", excuteData, &builder);
+		}
+	}
+
+	return "";
+}
+
+
 INLINE std::string __insert(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
 {
 	wiz::load_data::LoadData::AddData(global, dir, value, condition, excuteData, &builder);
@@ -170,3 +213,133 @@ INLINE std::string __element(wiz::load_data::UserType& global, const std::string
 	}
 }
 
+INLINE std::string __setElement(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& idx, const std::string& value)
+{
+	int _idx = stoi(idx);
+	wiz::load_data::UserType::Find(&global, dir, &builder).second[0]->SetItem(_idx, value);
+
+	return "";
+}
+
+INLINE std::string __size(wiz::load_data::UserType* global, std::string& dir)
+{
+	auto x = wiz::load_data::UserType::Find(global, dir, &builder);
+	
+	if (x.first) {
+		return wiz::_toString(x.second[0]->GetItemListSize());
+	}
+	else {
+		throw "error in __size function.";
+	}
+}
+
+//// todo - now.~ !
+INLINE std::string __get(wiz::load_data::UserType* global, std::string data, std::map<std::string, std::string>& locals, std::map<std::string, std::string>& parameters)
+{
+	std::string result;
+
+	// /./dir
+	try {
+		std::string x = _Find(*global, data);
+		return x;
+	}
+	catch (...) {
+
+	}
+	// $local.
+	try {
+		std::string x = wiz::load_data::FindLocals(locals, data);
+		return x;
+	}
+	catch (...) {
+
+	}
+	// $parameter.
+	try {
+		std::string x = wiz::load_data::FindParameters(parameters, data);
+		return x;
+	}
+	catch (...) {
+
+	}
+
+	return "";
+}
+
+INLINE bool __NOT(const bool x) {
+	return !x;
+}
+
+INLINE std::string __rand(const std::string& first, const std::string& last) {
+	int x = stoi(first);
+	int y = stoi(last);
+	int istart = std::min<int>(x, y), ilast = std::max<int>(x, y);
+
+	return wiz::_toString(rand()%(ilast - istart + 1) + istart);
+}
+
+INLINE std::string __pop_back(wiz::load_data::UserType* global, const std::string& dir)
+{
+	std::string result;
+
+	wiz::load_data::UserType* ut = nullptr;
+	auto finded = wiz::load_data::UserType::Find(global, dir, &builder);
+	ut = finded.second[0];
+
+	if (ut->IsItemList(ut->GetIListSize() - 1))
+	{
+		auto x = ut->GetItemList(ut->GetItemListSize() - 1);
+		result = (x.Get(0));
+		ut->RemoveItemList(ut->GetItemListSize() - 1);
+	}
+	else {
+		auto x = ut->GetUserTypeList(ut->GetUserTypeListSize() - 1);
+		result = ("\"" + x->ToString() + "\""); // chk!!
+		ut->RemoveUserTypeList(ut->GetUserTypeListSize() - 1);
+	}
+
+	return result;
+}
+
+
+INLINE std::string __swap(wiz::load_data::UserType* global, const ExcuteData& excuteData, 
+	const std::string& dir, const std::string& value1, const std::string& value2 )
+{	
+	if (value1 != value2) {
+		int x = atoi(value1.c_str());
+		int y = atoi(value2.c_str());
+
+		std::string temp = wiz::load_data::UserType::Find(global, dir, &builder).second[0]->GetItemList(x).Get(0);
+		std::string temp2 = wiz::load_data::UserType::Find(global, dir, &builder).second[0]->GetItemList(y).Get(0);
+
+		wiz::load_data::LoadData::SetData(*global, dir, x, temp2, "TRUE", excuteData, &builder);
+		wiz::load_data::LoadData::SetData(*global, dir, y, temp, "TRUE", excuteData, &builder);
+	}
+	return "";
+}
+
+
+INLINE std::string __findIndex(wiz::load_data::UserType* global, const ExcuteData& excuteData, const std::string& dir, const std::string& value)
+{
+	wiz::load_data::UserType ut;
+	wiz::load_data::LoadData::LoadDataFromString(wiz::load_data::UserType::Find(global, dir, &builder).second[0]->ToString(), ut);
+
+	for (int i = 0; i < ut.GetItemListSize(); ++i) {
+		if (ut.GetItemList(i).Get(0) == value) {
+			return wiz::toStr(i);
+		}
+	}
+
+	return "";
+}
+
+
+
+INLINE std::string __remove3(wiz::load_data::UserType* global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
+{
+	int idx = atoi(value.c_str());  // long long -> int?
+
+	wiz::load_data::LoadData::Remove(*global, dir, idx, condition, excuteData, &builder);
+
+	return "";
+}
