@@ -64,7 +64,7 @@ Event = { # just one!
 					$then = { $make = { /Card } }
 				}
 				$make = { data = { $concat_all = { /Card/ $parameter.i } } }
-				$insert2 = { dir = { $concat_all = { /Card/ $parameter.i } } value = { sha = { $divide ={$parameter.i 13} } num = { $modular={$parameter.i 13} } # no 
+				$insert2 = { dir = { $concat_all = { /Card/ $parameter.i } } value = { sha = { $divide ={$parameter.i 13 } } num = { $modular={$parameter.i 13} } # no 
 					isBlackJoker = no isColorJoker = no } }
 				$call = { id = 101 i = { $add = { $parameter.i 1  } } }
 		}
@@ -101,7 +101,7 @@ CardStringImage =
 {
 	num = { K A 2 3 4 5 6 7 8 9 10 J Q }
 	sha = { 
-		sha_image = { �� �� �� �� }
+		sha_image = { spade dia heart clover }
 		sha_name = { spade dia heart clover }
 	}
 	blackJoker = { �� }
@@ -499,9 +499,9 @@ Event = {
 	$assign = { $local.New value = { $element = { /FunctionNo $parameter.card } } }
 
 
-	$call = { id = 1005 Old_num =  $local.Old_num  New_num =  $local.New_num 
-						Old_sha = $local.Old_sha  New_sha =  $local.New_sha   
-				Old = $local.Old New = { $local.New }  Mode = $parameter.mode
+	$call = { id = 1005 Old_num = { $local.Old_num } New_num = { $local.New_num }  
+						Old_sha = { $local.Old_sha } New_sha = { $local.New_sha }  
+				Old = { $local.Old }  New = { $local.New }  Mode = { $parameter.mode }
 	}
 
 	$return = { $return_value = { } }
@@ -690,7 +690,7 @@ Event =
 {
 	id = 1100
 
-	$insert2 = { dir = { /State } value = { mode = /Mode/GENERAL_MODE } } ## why cf) mode = /Mode/GENEREAL_MODE
+	$insert2 = { dir = { /State } value = { mode = { /Mode/GENERAL_MODE } } } ## why cf) mode = /Mode/GENEREAL_MODE
 	# add action_state = NONE EAT PUT
 	$insert2 = { dir = { /State } value = { action_state = NONE } }
 	$insert2 = { dir = { /State } value = { action_card = NONE } }
@@ -899,7 +899,7 @@ Event =
 
 			 # // test
 			$call = { id = 1001 }
-			$call = { id = 1006  put_card = 0 card = 0 mode = /Mode/GENERAL_MODE  }
+			$call = { id = 1006  put_card = 0 card = 0 mode = { /Mode/GENERAL_MODE  } }
 			$assign = { $local.result value = { $return_value = { } } }
 			$print = { value = { $local.result } }
 			 #//~test
@@ -1112,7 +1112,6 @@ Event =
 	id = 4015
 
 	$local = { index card }
-	$local = { index card }
 	
 	$if = {
 		$condition = { $COMP< = { 0 $size = { $concat = { /PlayerCardList
@@ -1183,8 +1182,8 @@ Event =
 	}
 	$assign = { $local.card value = { $pop_back = { /CardList } } }
 	$insert2 = {
-		dir = { $concat = { /PlayerCardList $concat = { / $add ={ /Turn/now -1 } } } } 
-  		value = { $local.card  } 
+		 dir = { $concat = { /PlayerCardList $concat = { / $add ={ /Turn/now -1 } } } } 
+  		 value = { $local.card  } 
 	}
 }
 Event =

@@ -56,13 +56,9 @@ INLINE bool __EQ(const std::string& x, const std::string& y)
 }
 // find "/~"
 INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& str) {
-	std::string temp = wiz::load_data::Find(&global, str, &builder);
-	if (temp.empty()) {
-		return str; //throw temp; // chk std::pair<bool, std::string>
-	}
-	else {
-		return temp;
-	}
+	std::string x = wiz::load_data::Find(&global, str, &builder);
+	if(x.empty()) { return str; }
+	return x;
 }
 INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
 {
@@ -240,16 +236,22 @@ INLINE std::string __get(wiz::load_data::UserType* global, std::string data, std
 
 	// /./dir
 	try {
-		std::string x = _Find(*global, data);
-		return x;
+		if(data.size() > 1 && data[0] == '/') {
+			std::string x = wiz::load_data::Find(global, data, &builder);
+			if(!x.empty()) {
+				return x;
+			}
+		}
 	}
 	catch (...) {
-
+		
 	}
 	// $local.
 	try {
 		std::string x = wiz::load_data::FindLocals(locals, data);
-		return x;
+		if(!x.empty()) {
+			return x;
+		}
 	}
 	catch (...) {
 
@@ -257,13 +259,15 @@ INLINE std::string __get(wiz::load_data::UserType* global, std::string data, std
 	// $parameter.
 	try {
 		std::string x = wiz::load_data::FindParameters(parameters, data);
-		return x;
+		if(!x.empty()) {
+			return x;
+		}
 	}
 	catch (...) {
 
 	}
 
-	return "";
+	return data;
 }
 
 INLINE bool __NOT(const bool x) {
@@ -343,3 +347,4 @@ INLINE std::string __remove3(wiz::load_data::UserType* global, const ExcuteData&
 
 	return "";
 }
+
