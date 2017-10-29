@@ -15,42 +15,42 @@
 
 wiz::StringBuilder builder(102400);
 
-INLINE std::string __add(const std::string& s1, const std::string& s2)
+INLINE std::string __expr___add(const std::string& s1, const std::string& s2)
 {
 	return std::to_string(std::stoi(s1) + std::stoi(s2)); // change to int, double, ..
 }
 
-INLINE std::string __divide(const std::string& s1, const std::string& s2) 
+INLINE std::string __expr___divide(const std::string& s1, const std::string& s2) 
 {
 	return wiz::_toString(std::stoi(s1) / std::stoi(s2));
 }
 
-INLINE std::string __modular(const std::string& s1, const std::string& s2)
+INLINE std::string __expr___modular(const std::string& s1, const std::string& s2)
 {
 	return wiz::_toString(std::stoi(s1) % std::stoi(s2));
 }
 
 
-INLINE bool __COMP_LT_EQ(const std::string& s1, const std::string& s2)
+INLINE bool __expr___COMP_LT_EQ(const std::string& s1, const std::string& s2)
 {
 	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
 	return x == "== 0" || x == "< 0";
 }
-INLINE bool __COMP_GT_EQ(const std::string& s1, const std::string& s2)
+INLINE bool __expr___COMP_GT_EQ(const std::string& s1, const std::string& s2)
 {
 	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
 	return x == "== 0" || x == "> 0";
 }
 
-INLINE bool __OR(const bool x, const bool y)
+INLINE bool __expr___OR(const bool x, const bool y)
 {
 	return x || y;
 }
-INLINE bool __AND(const bool x, const bool y)
+INLINE bool __expr___AND(const bool x, const bool y)
 {
 	return x && y;
 }
-INLINE bool __EQ(const std::string& x, const std::string& y)
+INLINE bool __expr___EQ(const std::string& x, const std::string& y)
 {
 	return wiz::load_data::Utility::Compare(x, y, &builder) == "== 0";
 }
@@ -60,7 +60,7 @@ INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& st
 	if(x.empty()) { return str; }
 	return x;
 }
-INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
+INLINE std::string __expr___concat_all(const std::vector<std::string>& vec) // chk for -> no inline?
 {
 	std::string result;
 
@@ -69,13 +69,13 @@ INLINE std::string __concat_all(const std::vector<std::string>& vec) // chk for 
 	}
 	return result;
 }
-INLINE std::string __concat(const std::string& str1, const std::string& str2)
+INLINE std::string __expr___concat(const std::string& str1, const std::string& str2)
 {
 	return str1 + str2;
 }
 
 // todo - add ExcuteData parameter?
-INLINE std::string __make(wiz::load_data::UserType& global, const ExcuteData& data, const std::string& str, const std::string& condition)
+INLINE std::string __func___make(wiz::load_data::UserType& global, const ExcuteData& data, const std::string& str, const std::string& condition)
 {
 	std::string dir = str;
 
@@ -96,7 +96,7 @@ INLINE std::string __make(wiz::load_data::UserType& global, const ExcuteData& da
 
 	return "";
 }
-INLINE std::string __assign(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, const std::string& dir, const std::string& value, const std::string& condition)
+INLINE std::string __func___assign(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, const std::string& dir, const std::string& value, const std::string& condition)
 {
 	std::pair<std::string, std::string> _dir = Find2(&global, dir);
 
@@ -112,7 +112,7 @@ INLINE std::string __assign(wiz::load_data::UserType& global, const ExcuteData& 
 	return "";
 }
 
-INLINE std::string __assign2(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, 
+INLINE std::string __func___assign2(wiz::load_data::UserType& global, const ExcuteData& excuteData, std::map<std::string, std::string>& locals, 
 	const std::string& _dir, const std::string& value, const std::string& condition)
 {
 	std::pair<std::string, std::string> dir = Find2(&global, _dir);
@@ -131,7 +131,7 @@ INLINE std::string __assign2(wiz::load_data::UserType& global, const ExcuteData&
 }
 
 
-INLINE std::string __insert(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
+INLINE std::string __func___insert(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
 {
 	wiz::load_data::LoadData::AddData(global, dir, value, condition, excuteData, &builder);
 
@@ -165,12 +165,12 @@ INLINE std::string CONCAT_ALL(const std::vector<std::string>& vec)
 	return result;
 }
 
-INLINE bool __NOTEQ(const std::string x, const std::string y)
+INLINE bool __expr___NOTEQ(const std::string x, const std::string y)
 {
 	return !(wiz::load_data::Utility::Compare(x, y, &builder) == "== 0");
 }
 
-INLINE bool __AND_ALL(const std::vector<bool>& vec)
+INLINE bool __expr___AND_ALL(const std::vector<bool>& vec)
 {
 	bool result = true;
 
@@ -184,18 +184,18 @@ INLINE bool __AND_ALL(const std::vector<bool>& vec)
 	return result;
 }
 
-INLINE bool __COMP_GT_(const std::string& x, const std::string& y)
+INLINE bool __expr___COMP_GT_(const std::string& x, const std::string& y)
 {
 	return wiz::load_data::Utility::Compare(x, y, &builder) == "> 0";
 }
-INLINE bool __COMP_LT_(const std::string& x, const std::string& y)
+INLINE bool __expr___COMP_LT_(const std::string& x, const std::string& y)
 {
 	return wiz::load_data::Utility::Compare(x, y, &builder) == "< 0";
 }
 
-#define __return_value() result 
+#define __expr___return_value() result 
 
-INLINE std::string __element(wiz::load_data::UserType& global, const std::string& dir, const std::string& idx_str) {
+INLINE std::string __expr___element(wiz::load_data::UserType& global, const std::string& dir, const std::string& idx_str) {
 	int idx = atoi(idx_str.c_str());
 
 	if ('/' == dir[0])
@@ -209,7 +209,7 @@ INLINE std::string __element(wiz::load_data::UserType& global, const std::string
 	}
 }
 
-INLINE std::string __setElement(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& idx, const std::string& value)
+INLINE std::string __func___setElement(wiz::load_data::UserType& global, const ExcuteData& excuteData, const std::string& dir, const std::string& idx, const std::string& value)
 {
 	int _idx = stoi(idx);
 	wiz::load_data::UserType::Find(&global, dir, &builder).second[0]->SetItem(_idx, value);
@@ -217,7 +217,7 @@ INLINE std::string __setElement(wiz::load_data::UserType& global, const ExcuteDa
 	return "";
 }
 
-INLINE std::string __size(wiz::load_data::UserType* global, std::string& dir)
+INLINE std::string __expr___size(wiz::load_data::UserType* global, std::string& dir)
 {
 	auto x = wiz::load_data::UserType::Find(global, dir, &builder);
 	
@@ -225,12 +225,12 @@ INLINE std::string __size(wiz::load_data::UserType* global, std::string& dir)
 		return wiz::_toString(x.second[0]->GetItemListSize());
 	}
 	else {
-		throw "error in __size function.";
+		throw "error in __expr___size function.";
 	}
 }
 
 //// todo - now.~ !
-INLINE std::string __get(wiz::load_data::UserType* global, std::string data, std::map<std::string, std::string>& locals, std::map<std::string, std::string>& parameters)
+INLINE std::string __expr___get(wiz::load_data::UserType* global, std::string data, std::map<std::string, std::string>& locals, std::map<std::string, std::string>& parameters)
 {
 	std::string result;
 
@@ -270,11 +270,11 @@ INLINE std::string __get(wiz::load_data::UserType* global, std::string data, std
 	return data;
 }
 
-INLINE bool __NOT(const bool x) {
+INLINE bool __expr___NOT(const bool x) {
 	return !x;
 }
 
-INLINE std::string __rand(const std::string& first, const std::string& last) {
+INLINE std::string __expr___rand(const std::string& first, const std::string& last) {
 	int x = stoi(first);
 	int y = stoi(last);
 	int istart = std::min<int>(x, y), ilast = std::max<int>(x, y);
@@ -282,7 +282,7 @@ INLINE std::string __rand(const std::string& first, const std::string& last) {
 	return wiz::_toString(rand()%(ilast - istart + 1) + istart);
 }
 
-INLINE std::string __pop_back(wiz::load_data::UserType* global, const std::string& dir)
+INLINE std::string __expr___pop_back(wiz::load_data::UserType* global, const std::string& dir)
 {
 	std::string result;
 
@@ -298,7 +298,7 @@ INLINE std::string __pop_back(wiz::load_data::UserType* global, const std::strin
 	}
 	else {
 		auto x = ut->GetUserTypeList(ut->GetUserTypeListSize() - 1);
-		result = ("\"" + x->ToString() + "\""); // chk!!
+		result = (x->ToString()); // chk!!
 		ut->RemoveUserTypeList(ut->GetUserTypeListSize() - 1);
 	}
 
@@ -306,7 +306,7 @@ INLINE std::string __pop_back(wiz::load_data::UserType* global, const std::strin
 }
 
 
-INLINE std::string __swap(wiz::load_data::UserType* global, const ExcuteData& excuteData, 
+INLINE std::string __func___swap(wiz::load_data::UserType* global, const ExcuteData& excuteData, 
 	const std::string& dir, const std::string& value1, const std::string& value2 )
 {	
 	if (value1 != value2) {
@@ -323,7 +323,7 @@ INLINE std::string __swap(wiz::load_data::UserType* global, const ExcuteData& ex
 }
 
 
-INLINE std::string __findIndex(wiz::load_data::UserType* global, const ExcuteData& excuteData, const std::string& dir, const std::string& value)
+INLINE std::string __func___findIndex(wiz::load_data::UserType* global, const ExcuteData& excuteData, const std::string& dir, const std::string& value)
 {
 	wiz::load_data::UserType ut;
 	wiz::load_data::LoadData::LoadDataFromString(wiz::load_data::UserType::Find(global, dir, &builder).second[0]->ToString(), ut);
@@ -339,7 +339,7 @@ INLINE std::string __findIndex(wiz::load_data::UserType* global, const ExcuteDat
 
 
 
-INLINE std::string __remove3(wiz::load_data::UserType* global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
+INLINE std::string __func___remove3(wiz::load_data::UserType* global, const ExcuteData& excuteData, const std::string& dir, const std::string& value, const std::string& condition)
 {
 	int idx = atoi(value.c_str());  // long long -> int?
 
