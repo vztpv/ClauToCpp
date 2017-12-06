@@ -404,7 +404,7 @@ int main(void)
 	wiz::load_data::UserType global;
 	srand(time(NULL));
 	std::string data =
-		"Info =  { NUM_NUM = 13 SHA_NUM = 4 CARDNUM = 52 TOTAL_CARD_NUM = 54 PLAYER_NUM = 4 FIRST_CARD_NUM = 5 GAME_OVER_CARD_NUM = 15 ONE_CARD_FAIL_CARD_NUM = 5  } Mode =  { JUMP_MODE = 6 BACK_MODE = 7 MORE_ONE_MODE = 8 CHANGE_SHA_MODE = 3 GAME_END_MODE = 4 GAME_OVER_MODE = 5 ATTACK_MODE = 1 GENERAL_MODE = 0  } Turn =  { dir = true start = 1 end = 4 n = 4 now = 4  } CardStringImage =  { num =  { K A 2 3 4 5 6 7 8 9 10 J Q  } sha =  { sha_image =  { spade dia heart clover  } sha_name =  { spade dia heart clover  }  } blackJoker =  { ��  } colorJoker =  { ��  }  } PutCard =  { cardId = NONE  } FunctionNo =  {   } Functions =  {   } AttackPoint =  { total_point = 0 now_point = 0  } ChangeSha =  { sha = NONE  } State =  {   } Person =  {   } Computer =  {   } PlayerNameList =  {   } PlayerGameOverList =  {   } Temp =  { count = 0  }";
+		"Info =  { NUM_NUM = 13 SHA_NUM = 4 CARDNUM = 52 TOTAL_CARD_NUM = 54 PLAYER_NUM = 4 FIRST_CARD_NUM = 5 GAME_OVER_CARD_NUM = 15 ONE_CARD_FAIL_CARD_NUM = 5  } Mode =  { JUMP_MODE = 6 BACK_MODE = 7 MORE_ONE_MODE = 8 CHANGE_SHA_MODE = 3 GAME_END_MODE = 4 GAME_OVER_MODE = 5 ATTACK_MODE = 1 GENERAL_MODE = 0  } Turn =  { dir = true start = 1 end = 4 n = 4 now = 4  } CardStringImage =  { num =  { K A 2 3 4 5 6 7 8 9 10 J Q  } sha =  { sha_image =  { A B C D  } sha_name =  { spade dia heart clover  }  } blackJoker =  { E  } colorJoker =  { F  }  } PutCard =  { cardId = NONE  } FunctionNo =  {   } Functions =  {   } AttackPoint =  { total_point = 0 now_point = 0  } ChangeSha =  { sha = NONE  } State =  {   } Person =  {   } Computer =  {   } PlayerNameList =  {   } PlayerGameOverList =  {   } Temp =  { count = 0  }";
 	wiz::load_data::LoadData::LoadDataFromString(data, global);
 	std::cout << __event__0(&global, excuteData).second << std::endl;
 	return 0;
@@ -471,14 +471,18 @@ INLINE std::pair<bool, std::string> __event__101(wiz::load_data::UserType* globa
 	bool result_change = false;
 	std::string option;
 
+	locals["x"] = "";
+	locals["y"] = "";
 
 	if (__expr___COMP_LT_(parameters["i"], _Find(*global, "/Info/CARDNUM"))) {
 		if (__expr___EQ(parameters["i"], "0")) {
-			__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Card")}), "TRUE");
+			__func___make(*global, excuteData, "/Card", "TRUE");
 
 		}
 		__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat_all(std::vector<std::string>{ _Find(*global, "/Card/"), parameters["i"]})}), "TRUE");
-		__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat_all(std::vector<std::string>{ _Find(*global, "/Card/"), parameters["i"]})}), CONCAT_ALL(std::vector<std::string>{ "sha = ", __expr___divide(parameters["i"], "13"), "num = ", __expr___modular(parameters["i"], "13"), "isBlackJoker = no", "isColorJoker = no"}), "TRUE");
+		__func___assign(*global, excuteData, locals, "$local.x", CONCAT_ALL(std::vector<std::string>{ __expr___divide(parameters["i"], "13")}), "TRUE");
+		__func___assign(*global, excuteData, locals, "$local.y", CONCAT_ALL(std::vector<std::string>{ __expr___modular(parameters["i"], "13")}), "TRUE");
+		__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat_all(std::vector<std::string>{ _Find(*global, "/Card/"), parameters["i"]})}), CONCAT_ALL(std::vector<std::string>{ "sha = ", locals["x"], "num = ", locals["y"], "isBlackJoker = no", "isColorJoker = no"}), "TRUE");
 		{
 			std::map<std::string, std::string> param;
 			param["i"] = __expr___add(parameters["i"], "1");
@@ -501,13 +505,13 @@ INLINE std::pair<bool, std::string> __event__3(wiz::load_data::UserType* global,
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__101(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
 	}
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Card"), __expr___concat("/", _Find(*global, "/Info/CARDNUM"))}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Card"), __expr___concat("/", __expr___add(_Find(*global, "/Info/CARDNUM"), "1"))}), "TRUE");
+	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat(_Find(*global, "/Card"), __expr___concat("/", _Find(*global, "/Info/CARDNUM")))}), "TRUE");
+	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat(_Find(*global, "/Card"), __expr___concat("/", __expr___add(_Find(*global, "/Info/CARDNUM"), "1")))}), "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat(_Find(*global, "/Card"), __expr___concat("/", _Find(*global, "/Info/CARDNUM")))}), CONCAT_ALL(std::vector<std::string>{ "sha = -1", "num = -1", "isBlackJoker = yes", "isColorJoker = no"}), "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat(_Find(*global, "/Card"), __expr___concat("/", __expr___add(_Find(*global, "/Info/CARDNUM"), "1")))}), CONCAT_ALL(std::vector<std::string>{ "sha = -2", "num = -2", "isBlackJoker = no", "isColorJoker = yes"}), "TRUE");
 
@@ -548,31 +552,9 @@ INLINE std::pair<bool, std::string> __event__100(wiz::load_data::UserType* globa
 
 
 	if (__expr___EQ("yes", parameters["isBlackJoker"])) {
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/CardStringImage/blackJoker")}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/CardStringImage/blackJoker")});
-			}
-		}
-
 
 	}
 	if (__expr___EQ("yes", parameters["isColorJoker"])) {
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/CardStringImage/colorJoker")}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/CardStringImage/colorJoker")});
-			}
-		}
-
 
 	}
 	if (__expr___COMP_LT_("-1", parameters["num"])) {
@@ -613,31 +595,18 @@ INLINE std::pair<bool, std::string> __event__4(wiz::load_data::UserType* global,
 
 	if (__expr___COMP_LT_(parameters["i"], __expr___add("2", _Find(*global, "/Info/CARDNUM")))) {
 		if (__expr___EQ(parameters["i"], "0")) {
-			__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/CardList")}), "TRUE");
+			__func___make(*global, excuteData, "/CardList", "TRUE");
 
 		}
 		__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/CardList")}), CONCAT_ALL(std::vector<std::string>{ parameters["i"]}), "TRUE");
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ parameters["i"]}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ parameters["i"]});
-			}
+		if (CONCAT_ALL(std::vector<std::string>{ parameters["i"]}).empty()) {
+			std::cout << "EMPTY";
+		}
+		else {
+			std::cout << CONCAT_ALL(std::vector<std::string>{ parameters["i"]});
 		}
 
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-			}
-		}
+		std::cout << "\n";
 
 		{
 			std::map<std::string, std::string> param;
@@ -662,7 +631,7 @@ INLINE std::pair<bool, std::string> __event__5(wiz::load_data::UserType* global,
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__4(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -721,7 +690,7 @@ INLINE std::pair<bool, std::string> __event__11(wiz::load_data::UserType* global
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__12(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -740,8 +709,8 @@ INLINE std::pair<bool, std::string> __event__12(wiz::load_data::UserType* global
 	if (__expr___COMP_LT_(parameters["i"], _Find(*global, "/Info/PLAYER_NUM"))) {
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-			param["j"] = CONCAT_ALL(std::vector<std::string>{ parameters["i"]});
+			param["i"] = "0";
+			param["j"] = parameters["i"];
 
 			auto x = __event__13(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -771,7 +740,7 @@ INLINE std::pair<bool, std::string> __event__13(wiz::load_data::UserType* global
 		{
 			std::map<std::string, std::string> param;
 			param["i"] = __expr___add(parameters["i"], "1");
-			param["j"] = CONCAT_ALL(std::vector<std::string>{ parameters["j"]});
+			param["j"] = parameters["j"];
 
 			auto x = __event__13(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -954,7 +923,7 @@ INLINE std::pair<bool, std::string> __event__1001(wiz::load_data::UserType* glob
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__1000(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1087,7 +1056,7 @@ INLINE std::pair<bool, std::string> __event__1006(wiz::load_data::UserType* glob
 
 	{
 		std::map<std::string, std::string> param;
-		param["card"] = CONCAT_ALL(std::vector<std::string>{ parameters["put_card"]});
+		param["card"] = parameters["put_card"];
 
 		auto x = __event__103(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1099,7 +1068,7 @@ INLINE std::pair<bool, std::string> __event__1006(wiz::load_data::UserType* glob
 	}
 	{
 		std::map<std::string, std::string> param;
-		param["card"] = CONCAT_ALL(std::vector<std::string>{ parameters["put_card"]});
+		param["card"] = parameters["put_card"];
 
 		auto x = __event__104(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1107,7 +1076,7 @@ INLINE std::pair<bool, std::string> __event__1006(wiz::load_data::UserType* glob
 	__func___assign(*global, excuteData, locals, "$local.Old_num", CONCAT_ALL(std::vector<std::string>{ __expr___return_value()}), "TRUE");
 	{
 		std::map<std::string, std::string> param;
-		param["card"] = CONCAT_ALL(std::vector<std::string>{ parameters["card"]});
+		param["card"] = parameters["card"];
 
 		auto x = __event__103(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1115,7 +1084,7 @@ INLINE std::pair<bool, std::string> __event__1006(wiz::load_data::UserType* glob
 	__func___assign(*global, excuteData, locals, "$local.New_sha", CONCAT_ALL(std::vector<std::string>{ __expr___return_value()}), "TRUE");
 	{
 		std::map<std::string, std::string> param;
-		param["card"] = CONCAT_ALL(std::vector<std::string>{ parameters["card"]});
+		param["card"] = parameters["card"];
 
 		auto x = __event__104(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1158,34 +1127,34 @@ INLINE std::pair<bool, std::string> __event__1007(wiz::load_data::UserType* glob
 	locals["Jump1"] = "";
 	locals["Back1"] = "";
 
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/0")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/0", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/0")}), CONCAT_ALL(std::vector<std::string>{ "attack_point = 0", "kk = no", "change_sha = no", "jump = no", "back = no"}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Attack_A2", CONCAT_ALL(std::vector<std::string>{ "attack_point = 1", "kk = no", "change_sha = no", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/1")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/1", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/1")}), CONCAT_ALL(std::vector<std::string>{ locals["Attack_A2"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Attack_A3", CONCAT_ALL(std::vector<std::string>{ "attack_point = 2", "kk = no", "change_sha = no", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/2")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/2", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/2")}), CONCAT_ALL(std::vector<std::string>{ locals["Attack_A3"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Attack_A4", CONCAT_ALL(std::vector<std::string>{ "attack_point = 5", "kk = no", "change_sha = no", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/3")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/3", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/3")}), CONCAT_ALL(std::vector<std::string>{ locals["Attack_A4"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Attack_A5", CONCAT_ALL(std::vector<std::string>{ "attack_point = 7", "kk = no", "change_sha = no", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/4")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/4", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/4")}), CONCAT_ALL(std::vector<std::string>{ locals["Attack_A5"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Change_Sha1", CONCAT_ALL(std::vector<std::string>{ "attack_point = 0", "kk = no", "change_sha = yes", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/5")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/5", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/5")}), CONCAT_ALL(std::vector<std::string>{ locals["Change_Sha1"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Jump1", CONCAT_ALL(std::vector<std::string>{ "attack_point = 0", "kk = no", "change_sha = no", "jump = yes", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/6")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/6", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/6")}), CONCAT_ALL(std::vector<std::string>{ locals["Jump1"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Back1", CONCAT_ALL(std::vector<std::string>{ "attack_point = 0", "kk = no", "change_sha = no", "jump = no", "back = yes"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/7")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/7", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/7")}), CONCAT_ALL(std::vector<std::string>{ locals["Back1"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.KK1", CONCAT_ALL(std::vector<std::string>{ "attack_point = 0", "kk = yes", "change_sha = no", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/8")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/8", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/8")}), CONCAT_ALL(std::vector<std::string>{ locals["KK1"]}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.Attack_A1", CONCAT_ALL(std::vector<std::string>{ "attack_point = 3", "kk = no", "change_sha = no", "jump = no", "back = no"}), "TRUE");
-	__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/9")}), "TRUE");
+	__func___make(*global, excuteData, "/Functions/9", "TRUE");
 	__func___insert(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Functions/9")}), CONCAT_ALL(std::vector<std::string>{ locals["Attack_A1"]}), "TRUE");
 
 	return { result_change, result };
@@ -1200,28 +1169,20 @@ INLINE std::pair<bool, std::string> __event__1008(wiz::load_data::UserType* glob
 	locals["card_function_no"] = "";
 	locals["function_dir"] = "";
 
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ parameters["card"]}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ parameters["card"]});
-		}
+	if (CONCAT_ALL(std::vector<std::string>{ parameters["card"]}).empty()) {
+		std::cout << "EMPTY";
+	}
+	else {
+		std::cout << CONCAT_ALL(std::vector<std::string>{ parameters["card"]});
 	}
 
 	__func___assign(*global, excuteData, locals, "$local.card_function_no", CONCAT_ALL(std::vector<std::string>{ __expr___element(*global, _Find(*global, "/FunctionNo"), parameters["card"])}), "TRUE");
 	__func___assign(*global, excuteData, locals, "$local.function_dir", CONCAT_ALL(std::vector<std::string>{ __expr___concat(_Find(*global, "/Functions"), __expr___concat("/", locals["card_function_no"]))}), "TRUE");
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ locals["function_dir"]}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ locals["function_dir"]});
-		}
+	if (CONCAT_ALL(std::vector<std::string>{ locals["function_dir"]}).empty()) {
+		std::cout << "EMPTY";
+	}
+	else {
+		std::cout << CONCAT_ALL(std::vector<std::string>{ locals["function_dir"]});
 	}
 
 	if (__expr___COMP_GT_(__expr___get(global, __expr___concat(locals["function_dir"], __expr___concat("/", "attack_point")), locals, parameters), "0")) {
@@ -1246,7 +1207,7 @@ INLINE std::pair<bool, std::string> __event__1008(wiz::load_data::UserType* glob
 	if (__expr___EQ(__expr___get(global, __expr___concat(locals["function_dir"], __expr___concat("/", "jump")), locals, parameters), "yes")) {
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+			param["i"] = "0";
 
 			auto x = __event__1016(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -1271,7 +1232,7 @@ INLINE std::pair<bool, std::string> __event__1008(wiz::load_data::UserType* glob
 		}
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+			param["i"] = "0";
 
 			auto x = __event__1016(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -1301,38 +1262,11 @@ INLINE std::pair<bool, std::string> __event__1015(wiz::load_data::UserType* glob
 	else {
 		__func___assign(*global, excuteData, locals, "/ChangeSha/sha", CONCAT_ALL(std::vector<std::string>{ __expr___rand("0", "3")}), "TRUE");
 		__func___assign(*global, excuteData, locals, "/State/mode", CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Mode/CHANGE_SHA_MODE")}), "TRUE");
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\"change sha : \""}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ "\"change sha : \""});
-			}
-		}
+		std::cout << "change sha : ";
 
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/ChangeSha/sha")}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/ChangeSha/sha")});
-			}
-		}
+		std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/ChangeSha/sha")});
 
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-			}
-		}
+		std::cout << "\n";
 
 
 	}
@@ -1451,7 +1385,7 @@ INLINE std::pair<bool, std::string> __event__3003(wiz::load_data::UserType* glob
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__3002(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1491,8 +1425,8 @@ INLINE std::pair<bool, std::string> __event__3001(wiz::load_data::UserType* glob
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-		param["j"] = CONCAT_ALL(std::vector<std::string>{ "1"});
+		param["i"] = "0";
+		param["j"] = "1";
 
 		auto x = __event__3000(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1526,7 +1460,7 @@ INLINE std::pair<bool, std::string> __event__3000(wiz::load_data::UserType* glob
 			{
 				std::map<std::string, std::string> param;
 				param["i"] = __expr___add(parameters["i"], "1");
-				param["j"] = CONCAT_ALL(std::vector<std::string>{ parameters["j"]});
+				param["j"] = parameters["j"];
 
 				auto x = __event__3000(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
@@ -1548,7 +1482,7 @@ INLINE std::pair<bool, std::string> __event__8(wiz::load_data::UserType* global,
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__9(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -1566,7 +1500,7 @@ INLINE std::pair<bool, std::string> __event__9(wiz::load_data::UserType* global,
 
 	if (__expr___COMP_LT_(parameters["i"], _Find(*global, "/Info/PLAYER_NUM"))) {
 		if (__expr___EQ(parameters["i"], "0")) {
-			__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/PlayerCardList")}), "TRUE");
+			__func___make(*global, excuteData, "/PlayerCardList", "TRUE");
 
 		}
 		__func___make(*global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat_all(std::vector<std::string>{ _Find(*global, "/PlayerCardList/"), parameters["i"]})}), "TRUE");
@@ -1622,20 +1556,11 @@ INLINE std::pair<bool, std::string> __event__51(wiz::load_data::UserType* global
 			auto x = __event__100(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
 		}
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\"/\""}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ "\"/\""});
-			}
-		}
+		std::cout << "/";
 
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ parameters["i"]});
+			param["i"] = parameters["i"];
 			param["j"] = __expr___add(parameters["j"], "1");
 
 			auto x = __event__51(global, excuteData, param);
@@ -1657,22 +1582,13 @@ INLINE std::pair<bool, std::string> __event__50(wiz::load_data::UserType* global
 	if (__expr___COMP_LT_(parameters["i"], _Find(*global, "/Info/PLAYER_NUM"))) {
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ parameters["i"]});
-			param["j"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+			param["i"] = parameters["i"];
+			param["j"] = "0";
 
 			auto x = __event__51(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
 		}
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-			}
-		}
+		std::cout << "\n";
 
 		{
 			std::map<std::string, std::string> param;
@@ -1744,7 +1660,7 @@ INLINE std::pair<bool, std::string> __event__0(wiz::load_data::UserType* global,
 		__func___assign(*global, excuteData, locals, "/PutCard/cardId", CONCAT_ALL(std::vector<std::string>{ __expr___pop_back(global, _Find(*global, "/CardList"))}), "TRUE");
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+			param["i"] = "0";
 
 			auto x = __event__50(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -1757,23 +1673,19 @@ INLINE std::pair<bool, std::string> __event__0(wiz::load_data::UserType* global,
 		}
 		{
 			std::map<std::string, std::string> param;
-			param["card"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+			param["card"] = "0";
 			param["mode"] = _Find(*global, "/Mode/GENERAL_MODE");
-			param["put_card"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+			param["put_card"] = "0";
 
 			auto x = __event__1006(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
 		}
 		__func___assign(*global, excuteData, locals, "$local.result", CONCAT_ALL(std::vector<std::string>{ __expr___return_value()}), "TRUE");
-		{
-			auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ locals["result"]}), &builder);
-			if (x.first) {
-				wiz::load_data::UserType* ut = x.second[0];
-				std::cout << ut->ToString();
-			}
-			else {
-				std::cout << CONCAT_ALL(std::vector<std::string>{ locals["result"]});
-			}
+		if (CONCAT_ALL(std::vector<std::string>{ locals["result"]}).empty()) {
+			std::cout << "EMPTY";
+		}
+		else {
+			std::cout << CONCAT_ALL(std::vector<std::string>{ locals["result"]});
 		}
 
 		{
@@ -1854,81 +1766,36 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 	locals["card"] = "";
 	locals["idx"] = "";
 
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Turn/now")}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Turn/now")});
-		}
-	}
+	std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Turn/now")});
 
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-		}
-	}
+	std::cout << "\n";
 
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")});
-		}
-	}
+	std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")});
 
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-		}
-	}
+	std::cout << "\n";
 
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__50(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
 	}
 	{
 		std::map<std::string, std::string> param;
-		param["card"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/PutCard/cardId")});
+		param["card"] = _Find(*global, "/PutCard/cardId");
 
 		auto x = __event__52(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
 	}
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-		}
-	}
+	std::cout << "\n";
 
 	if (__expr___NOTEQ(_Find(*global, "/Turn/now"), _Find(*global, "/State/person_stream"))) {
 		__func___assign(*global, excuteData, locals, "/State/action_state", CONCAT_ALL(std::vector<std::string>{ "EAT"}), "TRUE");
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-			param["n"] = CONCAT_ALL(std::vector<std::string>{ "20"});
+			param["i"] = "0";
+			param["n"] = "20";
 
 			auto x = __event__4010(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -1937,21 +1804,12 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 			__func___assign(*global, excuteData, locals, "$local.card", CONCAT_ALL(std::vector<std::string>{ __expr___return_value()}), "TRUE");
 			{
 				std::map<std::string, std::string> param;
-				param["card"] = CONCAT_ALL(std::vector<std::string>{ locals["card"]});
+				param["card"] = locals["card"];
 
 				auto x = __event__52(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
 			}
-			{
-				auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ "\n"}), &builder);
-				if (x.first) {
-					wiz::load_data::UserType* ut = x.second[0];
-					std::cout << ut->ToString();
-				}
-				else {
-					std::cout << CONCAT_ALL(std::vector<std::string>{ "\n"});
-				}
-			}
+			std::cout << "\n";
 
 
 		}
@@ -1960,24 +1818,15 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 	else {
 
 	}
-	{
-		auto x = wiz::load_data::UserType::Find(global, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/action_state")}), &builder);
-		if (x.first) {
-			wiz::load_data::UserType* ut = x.second[0];
-			std::cout << ut->ToString();
-		}
-		else {
-			std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/action_state")});
-		}
-	}
+	std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/action_state")});
 
 	if (__expr___EQ(_Find(*global, "/State/action_state"), "PUT")) {
 		__func___assign(*global, excuteData, locals, "/State/action_state", CONCAT_ALL(std::vector<std::string>{ "-1"}), "TRUE");
 		{
 			std::map<std::string, std::string> param;
-			param["card"] = CONCAT_ALL(std::vector<std::string>{ locals["card"]});
-			param["mode"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")});
-			param["put_card"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/PutCard/cardId")});
+			param["card"] = locals["card"];
+			param["mode"] = _Find(*global, "/State/mode");
+			param["put_card"] = _Find(*global, "/PutCard/cardId");
 
 			auto x = __event__1006(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -1990,14 +1839,14 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 		if (__expr___EQ("2", __expr___size(global, __expr___concat(_Find(*global, "/PlayerCardList"), __expr___concat("/", __expr___add("-1", _Find(*global, "/Turn/now"))))))) {
 			{
 				std::map<std::string, std::string> param;
-				param["card"] = CONCAT_ALL(std::vector<std::string>{ locals["card"]});
+				param["card"] = locals["card"];
 
 				auto x = __event__4011(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
 			}
 			{
 				std::map<std::string, std::string> param;
-				param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+				param["i"] = "0";
 
 				auto x = __event__1016(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
@@ -2020,7 +1869,41 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 		__func___remove3(global, excuteData, CONCAT_ALL(std::vector<std::string>{ __expr___concat(_Find(*global, "/PlayerCardList"), __expr___concat("/", __expr___add(_Find(*global, "/Turn/now"), "-1")))}), CONCAT_ALL(std::vector<std::string>{ locals["idx"]}), "TRUE");
 
 		if (__expr___EQ("0", __expr___size(global, __expr___concat(_Find(*global, "/PlayerCardList"), __expr___concat("/", __expr___add("-1", _Find(*global, "/Turn/now"))))))) {
+			std::cout << "\n";
+
+			{
+				auto x = wiz::load_data::UserType::Find(global, "chk", &builder);
+				if (x.first) {
+					wiz::load_data::UserType* ut = x.second[0];
+					std::cout << ut->ToString();
+				}
+				else {
+					std::cout << "chk";
+				}
+			}
+
+			std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")});
+
+			std::cout << "\n";
+
 			__func___assign(*global, excuteData, locals, "/State/mode", CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Mode/GAME_END_MODE")}), "TRUE");
+			std::cout << "\n";
+
+			{
+				auto x = wiz::load_data::UserType::Find(global, "chk", &builder);
+				if (x.first) {
+					wiz::load_data::UserType* ut = x.second[0];
+					std::cout << ut->ToString();
+				}
+				else {
+					std::cout << "chk";
+				}
+			}
+
+			std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")});
+
+			std::cout << "\n";
+
 			result_change = true;
 			return { result_change, CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")}) };
 
@@ -2031,7 +1914,7 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 		}
 		{
 			std::map<std::string, std::string> param;
-			param["card"] = CONCAT_ALL(std::vector<std::string>{ locals["card"]});
+			param["card"] = locals["card"];
 
 			auto x = __event__1008(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -2043,8 +1926,8 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 		if (__expr___EQ(_Find(*global, "/State/mode"), _Find(*global, "/Mode/ATTACK_MODE"))) {
 			{
 				std::map<std::string, std::string> param;
-				param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-				param["n"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/AttackPoint/total_point")});
+				param["i"] = "0";
+				param["n"] = _Find(*global, "/AttackPoint/total_point");
 
 				auto x = __event__4013(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
@@ -2061,8 +1944,8 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 		else {
 			{
 				std::map<std::string, std::string> param;
-				param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-				param["n"] = CONCAT_ALL(std::vector<std::string>{ "1"});
+				param["i"] = "0";
+				param["n"] = "1";
 
 				auto x = __event__4013(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
@@ -2073,8 +1956,8 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 			__func___assign(*global, excuteData, locals, "/Temp/count", CONCAT_ALL(std::vector<std::string>{ "0"}), "TRUE");
 			{
 				std::map<std::string, std::string> param;
-				param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-				param["n"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Info/PLAYER_NUM")});
+				param["i"] = "0";
+				param["n"] = _Find(*global, "/Info/PLAYER_NUM");
 
 				auto x = __event__4014(global, excuteData, param);
 				if (x.first) { result_change = true; result = x.second; }
@@ -2105,7 +1988,7 @@ INLINE std::pair<bool, std::string> __event__4000(wiz::load_data::UserType* glob
 	}
 	{
 		std::map<std::string, std::string> param;
-		param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
+		param["i"] = "0";
 
 		auto x = __event__1016(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
@@ -2158,7 +2041,7 @@ INLINE std::pair<bool, std::string> __event__4014(wiz::load_data::UserType* glob
 		{
 			std::map<std::string, std::string> param;
 			param["i"] = __expr___add(parameters["i"], "1");
-			param["n"] = CONCAT_ALL(std::vector<std::string>{ parameters["n"]});
+			param["n"] = parameters["n"];
 
 			auto x = __event__4014(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -2186,7 +2069,7 @@ INLINE std::pair<bool, std::string> __event__4013(wiz::load_data::UserType* glob
 		{
 			std::map<std::string, std::string> param;
 			param["i"] = __expr___add(parameters["i"], "1");
-			param["n"] = CONCAT_ALL(std::vector<std::string>{ parameters["n"]});
+			param["n"] = parameters["n"];
 
 			auto x = __event__4013(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -2232,8 +2115,8 @@ INLINE std::pair<bool, std::string> __event__4011(wiz::load_data::UserType* glob
 	if (__expr___NOTEQ(locals["select"], __expr___rand("1", "3"))) {
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-			param["n"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Info/ONE_CARD_FAIL_CARD_NUM")});
+			param["i"] = "0";
+			param["n"] = _Find(*global, "/Info/ONE_CARD_FAIL_CARD_NUM");
 
 			auto x = __event__4013(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -2241,8 +2124,8 @@ INLINE std::pair<bool, std::string> __event__4011(wiz::load_data::UserType* glob
 		__func___assign(*global, excuteData, locals, "/Temp/count", CONCAT_ALL(std::vector<std::string>{ "0"}), "TRUE");
 		{
 			std::map<std::string, std::string> param;
-			param["i"] = CONCAT_ALL(std::vector<std::string>{ "0"});
-			param["n"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/Info/PLAYER_NUM")});
+			param["i"] = "0";
+			param["n"] = _Find(*global, "/Info/PLAYER_NUM");
 
 			auto x = __event__4014(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -2280,7 +2163,7 @@ INLINE std::pair<bool, std::string> __event__4011(wiz::load_data::UserType* glob
 		}
 		{
 			std::map<std::string, std::string> param;
-			param["card"] = CONCAT_ALL(std::vector<std::string>{ parameters["card"]});
+			param["card"] = parameters["card"];
 
 			auto x = __event__1008(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
@@ -2305,9 +2188,9 @@ INLINE std::pair<bool, std::string> __event__4010(wiz::load_data::UserType* glob
 		__func___assign(*global, excuteData, locals, "$local.card", CONCAT_ALL(std::vector<std::string>{ __expr___element(*global, __expr___concat(_Find(*global, "/PlayerCardList"), __expr___concat("/", __expr___add(_Find(*global, "/Turn/now"), "-1"))), locals["index"])}), "TRUE");
 		{
 			std::map<std::string, std::string> param;
-			param["card"] = CONCAT_ALL(std::vector<std::string>{ locals["card"]});
-			param["mode"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/State/mode")});
-			param["put_card"] = CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/PutCard/cardId")});
+			param["card"] = locals["card"];
+			param["mode"] = _Find(*global, "/State/mode");
+			param["put_card"] = _Find(*global, "/PutCard/cardId");
 
 			auto x = __event__1006(global, excuteData, param);
 			if (x.first) { result_change = true; result = x.second; }
