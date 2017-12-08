@@ -1,0 +1,30 @@
+Test=3
+Test={
+	Main={
+		$call={
+			id=0
+		}
+	}
+	Event={
+		id=0
+		$call={
+			id=1
+		}
+		$return={
+			end
+		}
+	}
+	Event={
+		id=1
+		$print={
+			data={
+				"Hello World B"
+			}
+		}
+		$print={
+			enter={
+				\n
+			}
+		}
+	}
+}
