@@ -941,15 +941,15 @@ int main(int argc, char* argv[])
 		}
 
 		{ // part C
-			auto x = global.GetCopyUserTypeItem("Main");
+			auto x = global.GetUserTypeItem("Main");
 			if (x.size() != 1) {
 				return -1; //
 			}
 			MainUT = *x[0];
-			EventUT = global.GetCopyUserTypeItem("Event");
+			EventUT = global.GetUserTypeItem("Event");
 
-			global.RemoveUserTypeList("Main");
-			global.RemoveUserTypeList("Event");
+			//global.RemoveUserTypeList("Main");
+			//global.RemoveUserTypeList("Event");
 
 			// user defined functions declaration?
 			const std::string main_name = MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0);
@@ -1010,7 +1010,10 @@ int main(int argc, char* argv[])
 		{ // part D
 			std::string fileName = name + "_test.txt";
 
+
 			wiz::load_data::LoadData::SaveWizDB(global, fileName, "1");
+
+
 			//global.Remove();
 
 
