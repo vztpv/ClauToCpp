@@ -1,0 +1,13 @@
+
+Main = {
+	$call = { id = 0 } 
+}
+
+Event = {
+	id = 0
+	
+	$print = { data = { "Hello World B" } }
+	$print = { enter = { \n } }
+	
+	$return = { end }
+}

@@ -1,0 +1,31 @@
+
+Test = 3
+
+Test = {
+	
+}
+
+Main = {
+	# $load_only_data = { fileName = { "a.txt" } dir = { Test } option = { USE_MODULE } }
+	# $load = { "a.txt" option = { USE_MODULE } }           
+	# $load_json = { fileName = { "a.txt" } dir = { Test2 } option = { USE_MODULE } }    
+	$load_only_data = { fileName = { "data1.txt" } dir = { Test } option = { USE_MODULE } }
+		# space -> '_'
+	
+	$call = { id = 0 } 
+}
+
+Event = {
+	id = 0
+	
+	$print = { data = { "Hello World A" } } 
+	$print = { enter = { \n } }
+	
+	# /./Test? UserType::Find? # return < bool, vector<UserType*> >
+	#$load_only_data = { fileName = { "data1.txt" } dir = { Test } }
+	$call_by_data = { Test } # add to ecilpse!
+	
+	$print = { data = { $return_value = { } } }
+	$_getch = { }
+}
+
