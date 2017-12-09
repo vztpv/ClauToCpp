@@ -1094,7 +1094,7 @@ int main(int argc, char* argv[])
 									event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
 
 									outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
-										<< "* global, ExcuteData& excuteData";
+										<< "* _global, ExcuteData& excuteData"; // check!
 									outFile << ", std::map<std::string, std::string>& parameters";
 
 									outFile << ")" << "\n"
@@ -1102,11 +1102,12 @@ int main(int argc, char* argv[])
 										<< "\tstd::map<std::string, std::string> locals;\n"
 										<< "\tstd::string result;\n"
 										<< "\tbool result_change = false;\n"
+										<< "\twiz::load_data::UserType* global = _global->GetUserTypeItem(\"" + dir + "\")[0];\n"
 										<< "\tstd::string option;\n\n";
 
 									// convertedFunction = ConvertFunction(*global, ut, excutedata, locals, parameters);
 									// $local = { }, $option = { } $parameter = { } => pass!
-									outFile << "\n" << ConvertFunction(&global, *_global.GetUserTypeList(j), *_global.GetUserTypeList(j), 1, "", true, dir) << "\n";
+									outFile << "\n" << ConvertFunction(&_global, *_global.GetUserTypeList(j), *_global.GetUserTypeList(j), 1, "", true, dir) << "\n";
 									outFile << "\treturn { result_change, result };\n";
 									outFile << "}\n";
 								}

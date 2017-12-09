@@ -1,3 +1,4 @@
+x = 5
 
 Main = {
 	$call = { id = 0 } 
@@ -6,8 +7,17 @@ Main = {
 Event = {
 	id = 0
 	
+	$call = { id = 1 } 
+
+	$return = { end }
+}
+
+Event = {
+	id = 1
+	
+
 	$print = { data = { "Hello World B" } }
 	$print = { enter = { \n } }
-	
-	$return = { end }
+	$print = { data = { /./x } }
+	$print = { enter = { \n } }
 }

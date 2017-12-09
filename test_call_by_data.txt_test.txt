@@ -1,5 +1,7 @@
+x=1
 Test=3
 Test={
+	x=5
 	Main={
 		$call={
 			id=0
@@ -19,6 +21,16 @@ Test={
 		$print={
 			data={
 				"Hello World B"
+			}
+		}
+		$print={
+			enter={
+				\n
+			}
+		}
+		$print={
+			data={
+				/./x
 			}
 		}
 		$print={
