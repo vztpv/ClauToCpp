@@ -387,11 +387,12 @@ INLINE std::pair<bool, std::string> __event__0(wiz::load_data::UserType* global,
 
 	return { result_change, result };
 }
-INLINE std::pair<bool, std::string> _module4_Test_4_Main(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
+INLINE std::pair<bool, std::string> _module4_Test_4_Main(wiz::load_data::UserType* _global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
 {
 	std::map<std::string, std::string> locals;
 	std::string result;
 	bool result_change = false;
+	wiz::load_data::UserType* global = _global->GetUserTypeItem("Test")[0];
 	std::string option;
 
 
@@ -432,6 +433,10 @@ INLINE std::pair<bool, std::string> _module4_Test_4_1(wiz::load_data::UserType* 
 
 
 	std::cout << "Hello World B";
+
+	std::cout << "\n";
+
+	std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/./x")});
 
 	std::cout << "\n";
 
