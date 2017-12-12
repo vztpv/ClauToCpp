@@ -349,6 +349,7 @@ INLINE std::string __func___remove3(wiz::load_data::UserType* global, const Excu
 }
 
 INLINE std::pair<bool, std::string> __event__0(wiz::load_data::UserType* global, ExcuteData& excuteData);
+INLINE std::pair<bool, std::string> __event__1(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);
 INLINE std::pair<bool, std::string> _module4_Test_4_Main(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);
 INLINE std::pair<bool, std::string> _module4_Test_4_0(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);
 INLINE std::pair<bool, std::string> _module4_Test_4_1(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);
@@ -382,8 +383,28 @@ INLINE std::pair<bool, std::string> __event__0(wiz::load_data::UserType* global,
 		auto x = _module4_Test_4_Main(global, excuteData, param);
 		if (x.first) { result_change = true; result = x.second; }
 	}
+	std::cout << CONCAT_ALL(std::vector<std::string>{ 	(([&]() -> std::string { 	std::map<std::string, std::string> param;
+	param["x"] = CONCAT_ALL(std::vector<std::string>{ "3"});
+
+	auto x = __event__1(global, excuteData, param);
+	if (x.first) { return x.second; }
+	else { return ""; }}) ())});
+
 	std::cout << CONCAT_ALL(std::vector<std::string>{ __expr___return_value()});
 
+
+	return { result_change, result };
+}
+INLINE std::pair<bool, std::string> __event__1(wiz::load_data::UserType* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters)
+{
+	std::map<std::string, std::string> locals;
+	std::string result;
+	bool result_change = false;
+	std::string option;
+
+
+	result_change = true;
+	return { result_change, CONCAT_ALL(std::vector<std::string>{ "Hello_World!"}) };
 
 	return { result_change, result };
 }
@@ -436,6 +457,7 @@ INLINE std::pair<bool, std::string> _module4_Test_4_1(wiz::load_data::UserType* 
 
 	std::cout << "\n";
 
+	__func___assign(*global, excuteData, locals, "/./x", CONCAT_ALL(std::vector<std::string>{ "356"}), "TRUE");
 	std::cout << CONCAT_ALL(std::vector<std::string>{ _Find(*global, "/./x")});
 
 	std::cout << "\n";
