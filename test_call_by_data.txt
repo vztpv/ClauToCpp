@@ -26,7 +26,16 @@ Event = {
 	#$load_only_data = { fileName = { "data1.txt" } dir = { Test } }
 	$call_by_data = { Test } # add to ecilpse!
 	
+	$print = { data = { $event_result = { id = 1 x = 3 } } }
+	
 	$print = { data = { $return_value = { } } }
 	$_getch = { }
+}
+
+Event = {
+	id = 1
+	
+	$parameter = { x }
+	$return = { Hello_World! }
 }
 

@@ -18,6 +18,9 @@ Event = {
 
 	$print = { data = { "Hello World B" } }
 	$print = { enter = { \n } }
+
+		$assign = { /./x value = { 356 } }
+
 	$print = { data = { /./x } }
 	$print = { enter = { \n } }
 }

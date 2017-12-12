@@ -28,6 +28,12 @@ Test={
 				\n
 			}
 		}
+		$assign={
+			/./x
+			value={
+				356
+			}
+		}
 		$print={
 			data={
 				/./x
@@ -80,6 +86,14 @@ Event={
 	}
 	$print={
 		data={
+			$event_result={
+				id=1
+				x=3
+			}
+		}
+	}
+	$print={
+		data={
 			$return_value={
 
 			}
@@ -87,5 +101,14 @@ Event={
 	}
 	$_getch={
 
+	}
+}
+Event={
+	id=1
+	$parameter={
+		x
+	}
+	$return={
+		Hello_World!
 	}
 }
