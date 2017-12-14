@@ -17,8 +17,8 @@ inline std::string ToStr(const std::string& str)
 {
 	std::string result;
 
-	wiz::load_data::Utility::ChangeStr2(str, std::vector<std::string>{"\"", "\'"}, std::vector<std::string>{"\\\"", "\\\'"}, result);
-
+	wiz::load_data::Utility::ChangeStr2(str, std::vector<std::string>{"\"", "\'", "\\"}, std::vector<std::string>{"\\\"", "\\\'", "\\\\"}, result);
+	
 	return result;
 }
 
@@ -1158,10 +1158,19 @@ int main(int argc, char* argv[])
 				<< "\tsrand(time(NULL));\n"
 				<< "\tstd::string fileName = "
 				<< "\""
+				
 				<< fileName
 				<< "\""
 				<< ";\n"
 				<< "\twiz::load_data::LoadData::LoadDataFromFile(\"" << fileName << "\", global);\n"
+				<< "\n"
+				<< "\twiz::load_data::UserType events;\n"
+				<< "\tauto x = global.GetUserTypeItem(\"Event\");\n"
+				<< "\tfor (int i = 0; i < x.size(); ++i) {\n"
+				<< "\tevents.AddUserTypeItem(*x[i]);\n"
+				<< "\t}"
+				<< "\texcuteData.chkInfo = true;"
+				<< "\texcuteData.pEvents = &events;"
 				<< "\tstd::cout << " << "__event__" << MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0) << "(&global, excuteData).second << std::endl;\n"
 				<< "\treturn 0;\n"
 				<< "}\n\n";
