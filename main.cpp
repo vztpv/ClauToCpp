@@ -963,7 +963,40 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 
 			result += "}\n";
 		}
+		else if (functionName == "$replace_datatype1_2") {
+			result += "{\n";
+			result += "std::string data = \"" + ToStr(eventUT.GetUserTypeList(i)->ToString()) + "\";\n";
+			result += "wiz::load_data::UserType val;\n";
+			result += "wiz::load_data::LoadData::LoadDataFromString(data, val);\n";
+			result += "std::string rex = ToBool4(nullptr, *global, val.GetUserTypeList(0)->ToString(), excuteData, &builder);\n";
+			result += "rex = rex.substr(1, rex.size() - 2);\n";
+			result += "std::vector<std::string> sval;\n";
+			result += "std::vector<std::string> scondition;\n";
+			result += "std::string start_dir = \"root\";\n";
+
+			result += "if (val.GetUserTypeListSize() >= 3)\n";
+			result += "{\n";
+			result += "	const int n = (val.GetUserTypeListSize() - 3);\n";
+			result += "	for (int i = 0; i < n; i = i + 2) { \n";
+			result += "	sval.push_back(val.GetUserTypeList(1 + i)->ToString());\n";
+				
+			result += "	scondition.push_back(val.GetUserTypeList(2 + i)->ToString());\n";
+			result += "	}\n";
+			result += "}\n";
+
+			result += "if (val.GetUserTypeListSize() >= 4) {\n";
+			result += "start_dir = ToBool4(nullptr, *global, val.GetUserTypeList(val.GetUserTypeListSize() - 2)->ToString(), excuteData, &builder);\n";
+			result += "	}\n";
+			result += "bool recursive = true;\n";
+			result += "	if (val.GetUserTypeListSize() >= 5) {\n";
+			result += "	recursive = ToBool4(nullptr, *global, val.GetUserTypeList(val.GetUserTypeListSize() - 1)->ToString(), excuteData, &builder) == \"TRUE\" ? true : false;\n";
+			result += "	}\n";
+
+			result += "	wiz::load_data::LoadData::ReplaceDataType1_2(*global, rex, sval, scondition, start_dir, excuteData, recursive, &builder);\n";
+			result += "}\n";
+		}
 	}
+
 	return result;
 }
 
@@ -1057,13 +1090,31 @@ int main(int argc, char* argv[])
 					for (int i = 0; i < x.size(); ++i) {
 						val = x[i];
 						std::string dir = wiz::load_data::ToBool4(nullptr, global, val->GetUserTypeList(1)->ToString(), ExcuteData(), &builder);
+
+						wiz::load_data::UserType _global;
+
+						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::ToBool4(nullptr, global,
+							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global);
+
+						{
+							int item_n = 0;
+							int user_n = 0;
+							wiz::load_data::UserType* ut = global.GetUserTypeItem(dir)[0];
+
+							for (int k = 0; k < _global.GetIListSize(); ++k) {
+								if (_global.IsItemList(k)) {
+									ut->AddItem(_global.GetItemList(item_n).GetName(), _global.GetItemList(item_n).Get(0));
+									item_n++;
+								}
+								else {
+									ut->AddUserTypeItem(*_global.GetUserTypeList(user_n));
+									user_n++;
+								}
+							}
+						}
+
 						if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
 							// global update.
-							wiz::load_data::UserType _global;
-							wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::ToBool4(nullptr, global,
-								RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global);
-
-							wiz::load_data::LoadData::AddData(global, "/./" + dir, _global.ToString(), "TRUE", ExcuteData(), &builder);
 
 							for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
 								if (_global.GetUserTypeList(j)->GetName() != "Event") {
@@ -1160,13 +1211,15 @@ int main(int argc, char* argv[])
 				for (int i = 0; i < x.size(); ++i) {
 					val = x[i];
 					std::string dir = wiz::load_data::ToBool4(nullptr, global, val->GetUserTypeList(1)->ToString(), ExcuteData(), &builder);
-					if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
 						// global update.
+					
+					if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
+
 						wiz::load_data::UserType _global;
+
 						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::ToBool4(nullptr, global,
 							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global);
 
-						wiz::load_data::LoadData::AddData(global, "/./" + dir, _global.ToString(), "TRUE", ExcuteData(), &builder);
 
 						for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
 							if (_global.GetUserTypeList(j)->GetName() != "Event") {
