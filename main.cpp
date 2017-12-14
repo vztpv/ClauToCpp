@@ -1056,30 +1056,15 @@ int main(int argc, char* argv[])
 			wiz::load_data::LoadData::LoadDataFromFile(name, global);
 		}
 
+		
+
 		{ // part C
 			auto x = global.GetUserTypeItem("Main");
 			if (x.size() != 1) {
 				return -1; //
 			}
 			MainUT = *x[0];
-			EventUT = global.GetUserTypeItem("Event");
-
-			//global.RemoveUserTypeList("Main");
-			//global.RemoveUserTypeList("Event");
-
-			// user defined functions declaration?
-			const std::string main_name = MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0);
-			outFile << "INLINE std::pair<bool, std::string> " << "__event__" << main_name << "(wiz::load_data::UserType"
-				<< "* global, ExcuteData& excuteData);" << "\n";
-			for (int i = 0; i < EventUT.size(); ++i) {
-				const std::string event_name = EventUT[i]->GetItem("id")[0].Get(0);
-				if (event_name == main_name) {
-					continue;
-				}
-				outFile << "INLINE std::pair<bool, std::string> " << "__event__" << event_name << "(wiz::load_data::UserType"
-					<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
-			}
-
+			
 			// chk $load_only_data
 			{
 				auto x = MainUT.GetUserTypeItem("$load_only_data"); //
@@ -1089,7 +1074,7 @@ int main(int argc, char* argv[])
 					int count = 0;
 					for (int i = 0; i < x.size(); ++i) {
 						val = x[i];
-						std::string dir = wiz::load_data::ToBool4(nullptr, global, val->GetUserTypeList(1)->ToString(), ExcuteData(), &builder);
+						std::string dir = val->GetUserTypeList(1)->ToString();
 
 						wiz::load_data::UserType _global;
 
@@ -1099,7 +1084,15 @@ int main(int argc, char* argv[])
 						{
 							int item_n = 0;
 							int user_n = 0;
-							wiz::load_data::UserType* ut = global.GetUserTypeItem(dir)[0];
+							wiz::load_data::UserType* ut;
+
+							if (dir == "/./" || dir == "root") {
+								ut = &global;
+							}
+							else {
+								dir = wiz::load_data::ToBool4(nullptr, global, dir, ExcuteData(), &builder);
+								ut = global.GetUserTypeItem(dir)[0];
+							}
 
 							for (int k = 0; k < _global.GetIListSize(); ++k) {
 								if (_global.IsItemList(k)) {
@@ -1114,8 +1107,6 @@ int main(int argc, char* argv[])
 						}
 
 						if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
-							// global update.
-
 							for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
 								if (_global.GetUserTypeList(j)->GetName() != "Event") {
 									if (_global.GetUserTypeList(j)->GetName() == "Main") {
@@ -1135,9 +1126,28 @@ int main(int argc, char* argv[])
 									<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
 							}
 						}
+
 						count++;
 					}
 				}
+			}
+
+			EventUT = global.GetUserTypeItem("Event");
+
+			//global.RemoveUserTypeList("Main");
+			//global.RemoveUserTypeList("Event");
+
+			// user defined functions declaration?
+			const std::string main_name = MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0);
+			outFile << "INLINE std::pair<bool, std::string> " << "__event__" << main_name << "(wiz::load_data::UserType"
+				<< "* global, ExcuteData& excuteData);" << "\n";
+			for (int i = 0; i < EventUT.size(); ++i) {
+				const std::string event_name = EventUT[i]->GetItem("id")[0].Get(0);
+				if (event_name == main_name) {
+					continue;
+				}
+				outFile << "INLINE std::pair<bool, std::string> " << "__event__" << event_name << "(wiz::load_data::UserType"
+					<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
 			}
 		}
 
@@ -1219,8 +1229,7 @@ int main(int argc, char* argv[])
 				int count = 0;
 				for (int i = 0; i < x.size(); ++i) {
 					val = x[i];
-					std::string dir = wiz::load_data::ToBool4(nullptr, global, val->GetUserTypeList(1)->ToString(), ExcuteData(), &builder);
-						// global update.
+					std::string dir = val->GetUserTypeList(1)->ToString();
 					
 					if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
 
