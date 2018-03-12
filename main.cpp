@@ -8,6 +8,11 @@
 #include <map>
 
 // no fast lib!
+
+#define ARRAY_QUEUE std::deque // chk?
+#define VECTOR std::vector
+int log_result = 0; // why?
+
 #include <wiz/ClauText.h>
 
 wiz::StringBuilder builder(102400);
@@ -32,8 +37,9 @@ void Do(const wiz::load_data::UserType& someUT, wiz::load_data::UserType& result
 		if (someUT.IsItemList(i)) {
 			// chk case $concat_all = { x = 3 } => error?
 			const std::string name = someUT.GetItemList(it_count).GetName();
-			const std::string data = someUT.GetItemList(it_count).Get(0);
+			std::string data = someUT.GetItemList(it_count).Get(0);
 
+			
 			if (wiz::String::startsWith(data, "$local.")) {
 				result.AddItem(ToStr(name), std::string("") + "locals[\"" + ToStr(data.substr(7)) + "\"]");
 				result.PushComment("1");
@@ -67,7 +73,7 @@ void Do(const wiz::load_data::UserType& someUT, wiz::load_data::UserType& result
 
 }
 
-std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int depth=0, int option=0)
+std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int depth=0, int option=0) // option : return option 1
 {
 	std::string result;
 
@@ -242,8 +248,18 @@ std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int d
 
 			}
 			else {
+				if (option == 1 && someUT.GetUserTypeList(ut_count)->GetName()[0] != '$') {
+					result +=  " \"{\", ";
+				}
 				auto x = PrintSomeUT(*someUT.GetUserTypeList(ut_count), false, depth + 1, 0);
 				result += x;
+
+				if (option == 1 && someUT.GetUserTypeList(ut_count)->GetName()[0] != '$') {
+					if (false == x.empty()) {
+						result += " , ";
+					}
+					result += " \"}\"";
+				}
 			}
 
 
@@ -604,7 +620,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 		else if (functionName == "$return") {
 			result += "result_change = true;\n";
 
-			for (int i = 0; i < depth; ++i) {
+			for (int k = 0; k < depth; ++k) {
 				result += "\t";
 			}
 
@@ -612,6 +628,9 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			std::string data;
 			{
 				std::string x = eventUT.GetUserTypeList(i)->ToString();
+
+				std::cout << x << std::endl;
+
 				wiz::load_data::UserType _ut;
 				wiz::load_data::UserType _resultUT;
 
@@ -620,7 +639,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 				// for item, item in ut->GetUserTypeList(0), ... 
 				Do(_ut, _resultUT);
 
-				data = "{ result_change, CONCAT_ALL(std::vector<std::string>{ " + PrintSomeUT(_resultUT) + "}) };";
+				data = "{ result_change, CONCAT_ALL(std::vector<std::string>{ " + PrintSomeUT(_resultUT, false, 0, 1) + "}) };";
 			}
 			result += data;
 
@@ -1011,9 +1030,12 @@ inline std::string RemoveQuoted(const std::string& str)
 
 int main(int argc, char* argv[])
 {
-	
-
 	//try {
+		int count_sequential = 0;
+		int count_parallel = 0;
+		int lex_parallel = 1;
+		int parse_parallel = 1;
+
 		wiz::load_data::UserType MainUT;
 		std::vector<wiz::load_data::UserType*> EventUT;
 		wiz::load_data::UserType global;
@@ -1076,6 +1098,9 @@ int main(int argc, char* argv[])
 						val = x[i];
 						std::string dir = val->GetUserTypeList(1)->ToString();
 
+
+						count_sequential++;
+
 						wiz::load_data::UserType _global;
 
 						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::ToBool4(nullptr, global,
@@ -1132,6 +1157,89 @@ int main(int argc, char* argv[])
 				}
 			}
 
+			// chk $load_only_data2(parallel)
+			{
+				auto x = MainUT.GetUserTypeItem("$load_only_data2"); //
+				if (!x.empty()) {
+					wiz::load_data::UserType* val = nullptr;
+
+					int count = 0;
+					for (int i = 0; i < x.size(); ++i) {
+						val = x[i];
+						std::string dir = val->GetUserTypeList(1)->ToString();
+
+						wiz::load_data::UserType _global;
+						
+						count_parallel++;
+
+						int pivot_num = 3;
+						int lex_thr_num = 4;
+
+						if (val->GetUserTypeListSize() >= 4) {
+							lex_thr_num = stoi(val->GetUserTypeList(3)->ToString());
+						}
+						if (val->GetUserTypeListSize() >= 5) {
+							int parse_thr_num = stoi(val->GetUserTypeList(4)->ToString());
+							pivot_num = parse_thr_num - 1;
+						}
+
+						lex_parallel = lex_thr_num;
+						parse_parallel = pivot_num + 1;
+
+						wiz::load_data::LoadData::LoadDataFromFile3(wiz::load_data::ToBool4(nullptr, global,
+							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global, pivot_num, lex_thr_num);
+
+						{
+							int item_n = 0;
+							int user_n = 0;
+							wiz::load_data::UserType* ut;
+
+							if (dir == "/./" || dir == "root") {
+								ut = &global;
+							}
+							else {
+								dir = wiz::load_data::ToBool4(nullptr, global, dir, ExcuteData(), &builder);
+								ut = global.GetUserTypeItem(dir)[0];
+							}
+
+							for (int k = 0; k < _global.GetIListSize(); ++k) {
+								if (_global.IsItemList(k)) {
+									ut->AddItem(_global.GetItemList(item_n).GetName(), _global.GetItemList(item_n).Get(0));
+									item_n++;
+								}
+								else {
+									ut->AddUserTypeItem(*_global.GetUserTypeList(user_n));
+									user_n++;
+								}
+							}
+						}
+
+						if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
+							for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
+								if (_global.GetUserTypeList(j)->GetName() != "Event") {
+									if (_global.GetUserTypeList(j)->GetName() == "Main") {
+										outFile << "INLINE std::pair<bool, std::string> " << "_module" << dir.size();
+
+										outFile << "_" << dir << "_" << dir.size() << "_" << "Main" << "(wiz::load_data::UserType"
+											<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
+									}
+									continue;
+								}
+								const std::string event_name = _global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
+
+								//// check name dupplication? - 00 ~ 99 ??
+								outFile << "INLINE std::pair<bool, std::string> ";
+								outFile << "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size());
+								outFile << "_" << event_name << "(wiz::load_data::UserType"
+									<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
+							}
+						}
+
+						count++;
+					}
+				}
+			}
+
 			EventUT = global.GetUserTypeItem("Event");
 
 			//global.RemoveUserTypeList("Main");
@@ -1140,7 +1248,7 @@ int main(int argc, char* argv[])
 			// user defined functions declaration?
 			const std::string main_name = MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0);
 			outFile << "INLINE std::pair<bool, std::string> " << "__event__" << main_name << "(wiz::load_data::UserType"
-				<< "* global, ExcuteData& excuteData);" << "\n";
+				<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
 			for (int i = 0; i < EventUT.size(); ++i) {
 				const std::string event_name = EventUT[i]->GetItem("id")[0].Get(0);
 				if (event_name == main_name) {
@@ -1157,9 +1265,9 @@ int main(int argc, char* argv[])
 
 			wiz::load_data::LoadData::SaveWizDB(global, fileName, "1");
 
-
-			//global.Remove();
-
+			std::cout << "fileName is " << fileName << std::endl;
+			fileName = wiz::String::replace(fileName, "\\", "/");
+			std::cout << "fileName is " << fileName << std::endl;
 
 			outFile << "\n" << "int main(void)\n"
 				<< "{\n"
@@ -1168,12 +1276,18 @@ int main(int argc, char* argv[])
 				<< "\tsrand(time(NULL));\n"
 				<< "\tstd::string fileName = "
 				<< "\""
-				
+
 				<< fileName
+
 				<< "\""
-				<< ";\n"
-				<< "\twiz::load_data::LoadData::LoadDataFromFile(\"" << fileName << "\", global);\n"
-				<< "\n"
+				<< ";\n";
+			if (0 == count_sequential && count_parallel > 0) {
+				outFile << "\twiz::load_data::LoadData::LoadDataFromFile3(fileName, global, " << parse_parallel - 1 << ", " << lex_parallel << ");\n";
+			}
+			else {
+				outFile << "\twiz::load_data::LoadData::LoadDataFromFile(fileName, global);\n"; // cf) LoadDataFromFile3
+			}
+			outFile	<< "\n"
 				<< "\twiz::load_data::UserType events;\n"
 				<< "\tauto x = global.GetUserTypeItem(\"Event\");\n"
 				<< "\tfor (int i = 0; i < x.size(); ++i) {\n"
@@ -1181,7 +1295,8 @@ int main(int argc, char* argv[])
 				<< "\t}"
 				<< "\texcuteData.chkInfo = true;"
 				<< "\texcuteData.pEvents = &events;"
-				<< "\tstd::cout << " << "__event__" << MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0) << "(&global, excuteData).second << std::endl;\n"
+				<< "\n\tstd::map<std::string, std::string> parameters;\n"
+				<< "\tstd::cout << " << "__event__" << MainUT.GetUserTypeItem("$call")[0]->GetItem("id")[0].Get(0) << "(&global, excuteData, parameters).second << std::endl;\n"
 				<< "\treturn 0;\n"
 				<< "}\n\n";
 		}
@@ -1194,7 +1309,8 @@ int main(int argc, char* argv[])
 				
 				outFile << "INLINE std::pair<bool, std::string> " << "__event__" << event_name << "(wiz::load_data::UserType"
 					<< "* global, ExcuteData& excuteData";
-				if (event_name != main_name) {
+				//if (event_name != main_name) 
+				{
 					outFile << ", std::map<std::string, std::string>& parameters";
 				}
 				outFile << ")" << "\n"
@@ -1303,6 +1419,101 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
+
+		{ // Part G
+			// chk $load_only_data2(parallel)
+			auto x = MainUT.GetUserTypeItem("$load_only_data2"); //
+			if (!x.empty()) {
+				wiz::load_data::UserType* val = nullptr;
+
+				int count = 0;
+				for (int i = 0; i < x.size(); ++i) {
+					val = x[i];
+					std::string dir = val->GetUserTypeList(1)->ToString();
+
+					if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
+						int pivot_num = 3;
+						int lex_thr_num = 4;
+
+						if (val->GetUserTypeListSize() >= 4) {
+							lex_thr_num = stoi(val->GetUserTypeList(3)->ToString());
+						}
+						if (val->GetUserTypeListSize() >= 5) {
+							int parse_thr_num = stoi(val->GetUserTypeList(4)->ToString());
+							pivot_num = parse_thr_num - 1;
+						}
+
+						wiz::load_data::UserType _global;
+
+						wiz::load_data::LoadData::LoadDataFromFile3(wiz::load_data::ToBool4(nullptr, global,
+							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global, pivot_num, lex_thr_num);
+
+
+						for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
+							if (_global.GetUserTypeList(j)->GetName() != "Event") {
+								if (_global.GetUserTypeList(j)->GetName() == "Main") {
+									std::string event_name = "Main"; //_global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
+
+																	 //// check name dupplication? - 00 ~ 99
+									event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
+
+									outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
+										<< "* _global, ExcuteData& excuteData"; // check!
+									outFile << ", std::map<std::string, std::string>& parameters";
+
+									outFile << ")" << "\n"
+										<< "{\n"
+										<< "\tstd::map<std::string, std::string> locals;\n"
+										<< "\tstd::string result;\n"
+										<< "\tbool result_change = false;\n"
+										<< "\twiz::load_data::UserType* global = _global->GetUserTypeItem(\"" + dir + "\")[0];\n"
+										<< "\tstd::string option;\n\n";
+
+									// convertedFunction = ConvertFunction(*global, ut, excutedata, locals, parameters);
+									// $local = { }, $option = { } $parameter = { } => pass!
+									outFile << "\n" << ConvertFunction(&_global, *_global.GetUserTypeList(j), *_global.GetUserTypeList(j), 1, "", true, dir) << "\n";
+									outFile << "\treturn { result_change, result };\n";
+									outFile << "}\n";
+								}
+								continue;
+							}
+							std::string event_name = _global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
+
+							//// check name dupplication? - 00 ~ 99
+							event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
+
+							outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
+								<< "* global, ExcuteData& excuteData";
+							outFile << ", std::map<std::string, std::string>& parameters";
+
+							outFile << ")" << "\n"
+								<< "{\n"
+								<< "\tstd::map<std::string, std::string> locals;\n"
+								<< "\tstd::string result;\n"
+								<< "\tbool result_change = false;\n"
+								<< "\tstd::string option;\n\n";
+
+							// set locals
+							{
+								auto locals = _global.GetUserTypeList(j)->GetUserTypeItem("$local");
+								if (!locals.empty()) {
+									for (int j = 0; j < locals[0]->GetItemListSize(); ++j) {
+										outFile << "\tlocals[\"" << ToStr(locals[0]->GetItemList(j).Get(0)) << "\"] = \"\";\n";
+									}
+								}
+							}
+							// convertedFunction = ConvertFunction(*global, ut, excutedata, locals, parameters);
+							// $local = { }, $option = { } $parameter = { } => pass!
+							outFile << "\n" << ConvertFunction(&global, *_global.GetUserTypeList(j), *_global.GetUserTypeList(j), 1, "", true, dir) << "\n";
+							outFile << "\treturn { result_change, result };\n";
+							outFile << "}\n";
+						}
+					}
+					count++;
+				}
+			}
+		}
+
 		// close
 		outFile.close();
 	//}

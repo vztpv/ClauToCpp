@@ -7,6 +7,11 @@
 #include <map>
 
 // no fast lib!
+
+#define ARRAY_QUEUE std::deque // chk?
+#define VECTOR std::vector
+int log_result = 0; // why?
+
 #include <wiz/ClauText.h>
 
 #define INLINE inline
@@ -233,6 +238,10 @@ INLINE std::string __expr___size(wiz::load_data::UserType* global, std::string& 
 INLINE std::string __expr___get(wiz::load_data::UserType* global, std::string data, std::map<std::string, std::string>& locals, std::map<std::string, std::string>& parameters)
 {
 	std::string result;
+	
+	if (data.size() > 1 && data[0] == '@') {
+		data.erase(data.begin());
+	}
 
 	// /./dir
 	try {
