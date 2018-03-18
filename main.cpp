@@ -289,6 +289,9 @@ std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int d
 
 	return result;
 }
+
+
+
 std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::UserType& _eventUT, wiz::load_data::UserType& eventUT, int depth = 1, const std::string& _option = "", bool is_module = false, const std::string& module_name = "") // , int depth,  for \t!
 {
 	std::string result;
@@ -1013,6 +1016,100 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 
 			result += "	wiz::load_data::LoadData::ReplaceDataType1_2(*global, rex, sval, scondition, start_dir, excuteData, recursive, &builder);\n";
 			result += "}\n";
+		}
+		
+		else if (functionName == "$iterate") { // re.. need fixed?
+			// dir - no tobool4
+			// event ids - no tobool4
+			// (recursive : FALSE default?, use tobool4)
+			std::string dir;
+			std::vector<std::string> ids;
+			std::string recursive = "FALSE";
+
+			wiz::load_data::UserType* func = eventUT.GetUserTypeList(i);
+			dir = ToStr(func->GetUserTypeList(0)->ToString());
+
+			for (int j = 0; j < func->GetUserTypeList(1)->GetItemListSize(); ++j) {
+				ids.push_back(ToStr(func->GetUserTypeList(1)->GetItemList(j).Get(0)));
+			}
+			for (int k = 0; k < ids.size(); ++k) {
+				if (!is_module) {
+					ids[k] = "__event__" + ids[k];
+				}
+				else {
+					ids[k] = "_module" + wiz::toStr(module_name.size()) + "_" + module_name + "_" + wiz::toStr(module_name.size()) + "_" + ids[k];
+				}
+			}
+
+			if (func->GetUserTypeListSize() >= 3) {
+				wiz::load_data::UserType* ut = func->GetUserTypeList(2);
+				wiz::load_data::UserType resultUT;
+
+				Do(*ut, resultUT);
+
+				recursive = PrintSomeUT(resultUT);
+			}
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "{\n";
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += std::string() + "std::string dir = " + "\"" + ToStr(dir) + "\"" + ";\n";
+			
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "std::vector<wiz::load_data::UserType*> dirUTVec = wiz::load_data::UserType::Find(global, dir, &builder).second;\n";
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "for (int t = 0; t < dirUTVec.size(); ++t) {\n";
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "Iterate(global, dirUTVec[t], ";
+			result += "std::vector<std::pair<bool, std::string> (*)(wiz::load_data::UserType*, ExcuteData&, std::map<std::string, std::string>&)>{ ";
+			for (int j = 0; j < ids.size(); ++j) {
+				result += ids[j];
+
+				if (j < ids.size() - 1) {
+					result += ", ";
+				}
+			}
+			result += "}, ";
+			result += "\"" + ToStr(recursive) + "\"" + ", " + wiz::_toString(depth) + ", " + (is_module ? "true" : "false");
+			
+			if (is_module) {
+				result += ", " + module_name + ");\n";
+			}
+			else {
+				result += std::string() + ", " + "\"empty_module_name\"" + ");\n";
+			}
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "}\n";
+
+			for (int i = 0; i < depth + 1; ++i) {
+				result += "\t";
+			}
+			result += "}\n";
+			result += "\n";
+		}
+		// todo ! 
+		else if (functionName == "$save_data_only2") {
+			// chk functionName?
 		}
 	}
 
