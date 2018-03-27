@@ -541,7 +541,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 				id = "__event__" + id;
 			}
 			else {
-				id = "_module" + wiz::toStr(module_name.size()) + "_" + module_name + "_" + wiz::toStr(module_name.size()) + "_" + id;
+				id = "__module_" + wiz::toStr(module_name.size()) + "_" + module_name + "_" + wiz::toStr(module_name.size()) + "_" + id;
 			}
 
 			result += id;
@@ -911,7 +911,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			
 			wiz::load_data::UserType _func;
 			wiz::load_data::LoadData::LoadDataFromString(
-				std::string("") + "$call = { id = " + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_Main }", _func);
+				std::string("") + "$call = { id = " + "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_Main }", _func);
 			
 			std::string id;
 			wiz::load_data::UserType* func = _func.GetUserTypeList(0);
@@ -1037,7 +1037,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 					ids[k] = "__event__" + ids[k];
 				}
 				else {
-					ids[k] = "_module" + wiz::toStr(module_name.size()) + "_" + module_name + "_" + wiz::toStr(module_name.size()) + "_" + ids[k];
+					ids[k] = "__module_" + wiz::toStr(module_name.size()) + "_" + module_name + "_" + wiz::toStr(module_name.size()) + "_" + ids[k];
 				}
 			}
 
@@ -1195,7 +1195,6 @@ int main(int argc, char* argv[])
 						val = x[i];
 						std::string dir = val->GetUserTypeList(1)->ToString();
 
-
 						count_sequential++;
 
 						wiz::load_data::UserType _global;
@@ -1208,7 +1207,7 @@ int main(int argc, char* argv[])
 							int user_n = 0;
 							wiz::load_data::UserType* ut;
 
-							if (dir == "/./" || dir == "root") {
+							if (dir == "/./" || dir == "root") { 
 								ut = &global;
 							}
 							else {
@@ -1232,7 +1231,7 @@ int main(int argc, char* argv[])
 							for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
 								if (_global.GetUserTypeList(j)->GetName() != "Event") {
 									if (_global.GetUserTypeList(j)->GetName() == "Main") {
-										outFile << "INLINE std::pair<bool, std::string> " << "_module" << dir.size();
+										outFile << "INLINE std::pair<bool, std::string> " << "__module_" << dir.size();
 
 										outFile << "_" << dir << "_" << dir.size() << "_" << "Main" << "(wiz::load_data::UserType"
 											<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
@@ -1241,9 +1240,9 @@ int main(int argc, char* argv[])
 								}
 								const std::string event_name = _global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
 
-								//// check name dupplication? - 00 ~ 99
+								//// check name dupplication? - 00 ~ 99?
 								outFile << "INLINE std::pair<bool, std::string> ";
-								outFile << "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size());
+								outFile << "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size());
 								outFile << "_" << event_name << "(wiz::load_data::UserType"
 									<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
 							}
@@ -1272,11 +1271,11 @@ int main(int argc, char* argv[])
 						int pivot_num = 3;
 						int lex_thr_num = 4;
 
-						if (val->GetUserTypeListSize() >= 4) {
-							lex_thr_num = stoi(val->GetUserTypeList(3)->ToString());
+						if (val->GetUserTypeListSize() >= 3) {
+							lex_thr_num = stoi(val->GetUserTypeList(2)->ToString());
 						}
-						if (val->GetUserTypeListSize() >= 5) {
-							int parse_thr_num = stoi(val->GetUserTypeList(4)->ToString());
+						if (val->GetUserTypeListSize() >= 4) {
+							int parse_thr_num = stoi(val->GetUserTypeList(3)->ToString());
 							pivot_num = parse_thr_num - 1;
 						}
 
@@ -1311,11 +1310,11 @@ int main(int argc, char* argv[])
 							}
 						}
 
-						if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
+						if (val->GetUserTypeListSize() >= 5 && val->GetUserTypeList(4)->ToString() == "USE_MODULE") {
 							for (int j = 0; j < _global.GetUserTypeListSize(); ++j) {
 								if (_global.GetUserTypeList(j)->GetName() != "Event") {
 									if (_global.GetUserTypeList(j)->GetName() == "Main") {
-										outFile << "INLINE std::pair<bool, std::string> " << "_module" << dir.size();
+										outFile << "INLINE std::pair<bool, std::string> " << "__module_" << dir.size();
 
 										outFile << "_" << dir << "_" << dir.size() << "_" << "Main" << "(wiz::load_data::UserType"
 											<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
@@ -1326,7 +1325,7 @@ int main(int argc, char* argv[])
 
 								//// check name dupplication? - 00 ~ 99 ??
 								outFile << "INLINE std::pair<bool, std::string> ";
-								outFile << "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size());
+								outFile << "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size());
 								outFile << "_" << event_name << "(wiz::load_data::UserType"
 									<< "* global, ExcuteData& excuteData, std::map<std::string, std::string>& parameters);" << "\n";
 							}
@@ -1443,7 +1442,7 @@ int main(int argc, char* argv[])
 				for (int i = 0; i < x.size(); ++i) {
 					val = x[i];
 					std::string dir = val->GetUserTypeList(1)->ToString();
-					
+
 					if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
 
 						wiz::load_data::UserType _global;
@@ -1458,7 +1457,7 @@ int main(int argc, char* argv[])
 									std::string event_name = "Main"; //_global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
 
 									//// check name dupplication? - 00 ~ 99
-									event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
+									event_name = std::string("") + "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
 
 									outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
 										<< "* _global, ExcuteData& excuteData"; // check!
@@ -1483,7 +1482,7 @@ int main(int argc, char* argv[])
 							std::string event_name = _global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
 
 							//// check name dupplication? - 00 ~ 99
-							event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
+							event_name = std::string("") + "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
 
 							outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
 								<< "* global, ExcuteData& excuteData";
@@ -1528,15 +1527,15 @@ int main(int argc, char* argv[])
 					val = x[i];
 					std::string dir = val->GetUserTypeList(1)->ToString();
 
-					if (val->GetUserTypeListSize() >= 3 && val->GetUserTypeList(2)->ToString() == "USE_MODULE") {
+					if (val->GetUserTypeListSize() >= 5 && val->GetUserTypeList(4)->ToString() == "USE_MODULE") {
 						int pivot_num = 3;
 						int lex_thr_num = 4;
 
-						if (val->GetUserTypeListSize() >= 4) {
-							lex_thr_num = stoi(val->GetUserTypeList(3)->ToString());
+						if (val->GetUserTypeListSize() >= 3) {
+							lex_thr_num = stoi(val->GetUserTypeList(2)->ToString());
 						}
-						if (val->GetUserTypeListSize() >= 5) {
-							int parse_thr_num = stoi(val->GetUserTypeList(4)->ToString());
+						if (val->GetUserTypeListSize() >= 4) {
+							int parse_thr_num = stoi(val->GetUserTypeList(3)->ToString());
 							pivot_num = parse_thr_num - 1;
 						}
 
@@ -1552,7 +1551,7 @@ int main(int argc, char* argv[])
 									std::string event_name = "Main"; //_global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
 
 																	 //// check name dupplication? - 00 ~ 99
-									event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
+									event_name = std::string("") + "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
 
 									outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
 										<< "* _global, ExcuteData& excuteData"; // check!
@@ -1577,7 +1576,7 @@ int main(int argc, char* argv[])
 							std::string event_name = _global.GetUserTypeList(j)->GetItem("id")[0].Get(0);
 
 							//// check name dupplication? - 00 ~ 99
-							event_name = std::string("") + "_module" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
+							event_name = std::string("") + "__module_" + wiz::toStr(dir.size()) + "_" + dir + "_" + wiz::toStr(dir.size()) + "_" + event_name;
 
 							outFile << "INLINE std::pair<bool, std::string> " << event_name << "(wiz::load_data::UserType"
 								<< "* global, ExcuteData& excuteData";

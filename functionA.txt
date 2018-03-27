@@ -357,3 +357,49 @@ INLINE std::string __func___remove3(wiz::load_data::UserType* global, const Excu
 	return "";
 }
 
+void Iterate(wiz::load_data::UserType* global, wiz::load_data::UserType* dirUT,
+	const std::vector<std::pair<bool, std::string>(*)(wiz::load_data::UserType*, ExcuteData&, std::map<std::string, std::string>&)>& ids,
+	const std::string& recursive, int depth, bool is_module, const std::string& module_name)
+{
+	for (int m = 0; m < dirUT->GetItemListSize(); ++m) {
+		std::map<std::string, std::string> param;
+
+		param.insert(std::make_pair("name", dirUT->GetItemList(m).GetName()));
+		param.insert(std::make_pair("value", dirUT->GetItemList(m).Get(0)));
+		param.insert(std::make_pair("is_user_type", "FALSE"));
+
+		for (int k = 0; k < ids.size(); ++k) {
+			auto x = ids[k](global, ExcuteData(), param);
+			if (x.first) {
+				wiz::load_data::UserType ut;
+				wiz::load_data::LoadData::LoadDataFromString(x.second, ut);
+
+				dirUT->GetItemList(m).SetName(ut.GetItem("name")[0].Get(0));
+				dirUT->GetItemList(m).Set(0, ut.GetItem("value")[0].Get(0));
+			}
+		}
+	}
+	for (int m = 0; m < dirUT->GetUserTypeListSize(); ++m) {
+		std::map<std::string, std::string> param;
+
+		param.insert(std::make_pair("name", dirUT->GetUserTypeList(m)->GetName()));
+		param.insert(std::make_pair("value", "NONE"));
+		param.insert(std::make_pair("is_user_type", "TRUE"));
+
+
+		for (int k = 0; k < ids.size(); ++k) {
+			auto x = ids[k](global, ExcuteData(), param);
+			
+			if (x.first) {
+				wiz::load_data::UserType ut;
+				wiz::load_data::LoadData::LoadDataFromString(x.second, ut);
+
+				dirUT->GetItemList(m).SetName(ut.GetItem("name")[0].Get(0));
+			}
+		}
+
+		if ("TRUE" == recursive) {
+			Iterate(global, dirUT->GetUserTypeList(m), ids, recursive, depth, is_module, module_name);
+		}
+	}
+}
