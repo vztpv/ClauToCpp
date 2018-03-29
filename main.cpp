@@ -1087,13 +1087,14 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 				}
 			}
 			result += "}, ";
-			result += "\"" + ToStr(recursive) + "\"" + ", " + wiz::_toString(depth) + ", " + (is_module ? "true" : "false");
+			result += recursive + ", " + wiz::_toString(depth) + ", " + (is_module ? "true" : "false");
 			
 			if (is_module) {
-				result += ", " + module_name + ");\n";
+				result += ", " + module_name +  ", " + "wiz::load_data::LoadData::GetRealDir(dir, dirUTVec[t], &builder)" + ");\n";
 			}
 			else {
-				result += std::string() + ", " + "\"empty_module_name\"" + ");\n";
+				result += std::string() + ", " + "\"empty_module_name\"" + ", " + 
+					"wiz::load_data::LoadData::GetRealDir(dir, dirUTVec[t], &builder)" + ");\n";
 			}
 
 			for (int i = 0; i < depth + 1; ++i) {
