@@ -369,7 +369,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			result += "\n";
 		}
 		else if (functionName == "$while") {
-			result += "while(";
+			result += "while (__expr___bool(";
 			wiz::load_data::UserType* ut = eventUT.GetUserTypeList(i)->GetUserTypeList(0);
 			wiz::load_data::UserType resultUT;
 			// for item, item in ut->GetUserTypeList(0), ... 
@@ -378,7 +378,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			{
 				result += PrintSomeUT(resultUT, true);
 			}
-			result += ") {\n";
+			result += ")) {\n";
 			result += ConvertFunction(global, _eventUT, *eventUT.GetUserTypeList(i)->GetUserTypeList(1), depth + 1, option, is_module, module_name);
 			result += "\n";
 			for (int i = 0; i < depth; ++i) {
@@ -387,7 +387,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			result += "}\n";
 		}
 		else if (functionName == "$if") {
-			result += "if(";
+			result += "if (__expr___bool(";
 			wiz::load_data::UserType* ut = eventUT.GetUserTypeList(i)->GetUserTypeList(0);
 			wiz::load_data::UserType resultUT;
 			// for item, item in ut->GetUserTypeList(0), ... 
@@ -395,14 +395,10 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 
 			{
 				std::string expr = PrintSomeUT(resultUT, true);
-				if (expr == "\"FALSE\"")
-				{
-					expr = "false";
-				}
-				else if (expr == "\"TRUE\"") {
-					expr = "true";
-				}
+				
 				result += expr;
+
+				result += ")";
 			}
 
 			result += ") {\n";

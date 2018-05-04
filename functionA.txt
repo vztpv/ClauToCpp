@@ -20,6 +20,13 @@ int log_result = 0; // why?
 
 wiz::StringBuilder builder(102400);
 
+
+INLINE bool __expr___bool(const std::string& str)
+{
+	return str == "TRUE";
+}
+
+
 INLINE std::string __expr___add(const std::string& s1, const std::string& s2)
 {
 	return std::to_string(std::stoi(s1) + std::stoi(s2)); // change to int, double, ..
@@ -35,29 +42,47 @@ INLINE std::string __expr___modular(const std::string& s1, const std::string& s2
 	return wiz::_toString(std::stoi(s1) % std::stoi(s2));
 }
 
-
-INLINE bool __expr___COMP_LT_EQ(const std::string& s1, const std::string& s2)
+INLINE std::string  __expr___COMP_LT_EQ(const std::string& s1, const std::string& s2)
 {
 	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
-	return x == "== 0" || x == "< 0";
+	if (x == "== 0" || x == "< 0") {
+		return "TRUE";
+	}
+	return "FALSE";
 }
-INLINE bool __expr___COMP_GT_EQ(const std::string& s1, const std::string& s2)
+INLINE std::string __expr___COMP_GT_EQ(const std::string& s1, const std::string& s2)
 {
 	auto x = wiz::load_data::Utility::Compare(s1, s2, &builder);
-	return x == "== 0" || x == "> 0";
+	if (x == "== 0" || x == "> 0") {
+		return "TRUE";
+	}
+	return "FALSE";
 }
 
-INLINE bool __expr___OR(const bool x, const bool y)
+INLINE std::string __expr___OR(const std::string& x, const std::string& y)
 {
-	return x || y;
+	if (x == "TRUE" || y == "TRUE") {
+		return "TRUE";
+	}
+	return "FALSE";
 }
-INLINE bool __expr___AND(const bool x, const bool y)
+INLINE std::string __expr___AND(const std::string& x, const std::string& y)
 {
-	return x && y;
+	if (x == "TRUE" && y == "TRUE")
+	{
+		return "TRUE";
+	}
+	return "FALSE";
 }
-INLINE bool __expr___EQ(const std::string& x, const std::string& y)
+
+INLINE std::string __expr___EQ(const std::string& x, const std::string& y)
 {
-	return wiz::load_data::Utility::Compare(x, y, &builder) == "== 0";
+	if (wiz::load_data::Utility::Compare(x, y, &builder) == "== 0") {
+		return "TRUE";
+	}
+	else {
+		return "FALSE";
+	}
 }
 // find "/~"
 INLINE std::string _Find(wiz::load_data::UserType& global, const std::string& str) {
@@ -188,15 +213,24 @@ INLINE bool __expr___AND_ALL(const std::vector<bool>& vec)
 
 	return result;
 }
+INLINE std::string __expr___COMP_GT_(const std::string& x, const std::string& y)
+{
+	return (wiz::load_data::Utility::Compare(x, y, &builder) == "> 0") ? "TRUE" : "FALSE";
+}
+INLINE std::string __expr___COMP_LT_(const std::string& x, const std::string& y)
+{
+	return (wiz::load_data::Utility::Compare(x, y, &builder) == "< 0") ? "TRUE" : "FALSE";
+}
 
-INLINE bool __expr___COMP_GT_(const std::string& x, const std::string& y)
+
+INLINE std::string __expr___is_quoted_str(const std::string& x)
 {
-	return wiz::load_data::Utility::Compare(x, y, &builder) == "> 0";
+	if (x.size() >= 2 && x[0] == x.back() && x[0] == '\"') {
+		return "TRUE";
+	}
+	return "FALSE";
 }
-INLINE bool __expr___COMP_LT_(const std::string& x, const std::string& y)
-{
-	return wiz::load_data::Utility::Compare(x, y, &builder) == "< 0";
-}
+
 
 #define __expr___return_value() result 
 
@@ -282,6 +316,12 @@ INLINE std::string __expr___get(wiz::load_data::UserType* global, std::string da
 INLINE bool __expr___NOT(const bool x) {
 	return !x;
 }
+
+INLINE std::string __expr___NOT(const std::string& x) {
+	return x == "TRUE" ? "FALSE" : "TRUE";
+}
+
+
 
 INLINE std::string __expr___rand(const std::string& first, const std::string& last) {
 	int x = stoi(first);
@@ -402,7 +442,7 @@ void Iterate(wiz::load_data::UserType* global, wiz::load_data::UserType* dirUT,
 				wiz::load_data::LoadData::LoadDataFromString(x.second, ut);
 
 				if (!ut.GetItem("name").empty()) {
-					dirUT->GetItemList(m).SetName(ut.GetItem("name")[0].Get(0));
+					dirUT->GetUserTypeList(m)->SetName(ut.GetItem("name")[0].Get(0));
 				}
 			}
 		}
