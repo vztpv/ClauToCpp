@@ -116,6 +116,14 @@ std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int d
 			bool bool_all = false;
 			bool return_value = false;
 			bool is_function = false;
+			bool no_name = someUT.GetUserTypeList(ut_count)->GetName().empty();
+			
+			//// check..
+			if (no_name) {
+				auto x = PrintSomeUT(*someUT.GetUserTypeList(ut_count), false, depth + 1, 0);
+				result += x;
+				continue;
+			}
 
 			std::string x = someUT.GetUserTypeList(ut_count)->GetName();
 			if ("$concat_all" == x) {
@@ -228,7 +236,7 @@ std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int d
 				result += "__expr___" + x + "(";
 			}
 			else {
-				result += "\"" + x + " = \", "; // chk!!
+				result += "std::string("") + \"" + x + " =  { \" +  CONCAT_ALL(std::vector<std::string>{ "; // chk!!
 			}
 
 			if (is_function && "element" == x) {
@@ -266,7 +274,9 @@ std::string PrintSomeUT(wiz::load_data::UserType& someUT, bool expr=false, int d
 			if (string_all || bool_all) {
 				result += "}";
 			}
-
+			if (!is_function) {
+				result += "}) + \" }\"";
+			}
 			if (return_value) {
 				result += ")";
 			}
@@ -509,8 +519,11 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 					wiz::load_data::UserType resultUT;
 					// for item, item in ut->GetUserTypeList(0), ... 
 					Do(*ut, resultUT);
+					std::cout << resultUT.ToString() << std::endl;
 
 					param[ut->GetName()] = PrintSomeUT(resultUT);
+
+					std::cout << param[ut->GetName()] << std::endl;
 				}
 			}
 
@@ -986,7 +999,7 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			result += "std::string data = \"" + ToStr(eventUT.GetUserTypeList(i)->ToString()) + "\";\n";
 			result += "wiz::load_data::UserType val;\n";
 			result += "wiz::load_data::LoadData::LoadDataFromString(data, val);\n";
-			result += "std::string rex = ToBool4(nullptr, *global, val.GetUserTypeList(0)->ToString(), excuteData, &builder);\n";
+			result += "std::string rex = LoadData::ToBool4(nullptr, *global, val.GetUserTypeList(0)->ToString(), excuteData, &builder);\n";
 			result += "rex = rex.substr(1, rex.size() - 2);\n";
 			result += "std::vector<std::string> sval;\n";
 			result += "std::vector<std::string> scondition;\n";
@@ -1003,11 +1016,11 @@ std::string ConvertFunction(wiz::load_data::UserType* global, wiz::load_data::Us
 			result += "}\n";
 
 			result += "if (val.GetUserTypeListSize() >= 4) {\n";
-			result += "start_dir = ToBool4(nullptr, *global, val.GetUserTypeList(val.GetUserTypeListSize() - 2)->ToString(), excuteData, &builder);\n";
+			result += "start_dir = LoadData::ToBool4(nullptr, *global, val.GetUserTypeList(val.GetUserTypeListSize() - 2)->ToString(), excuteData, &builder);\n";
 			result += "	}\n";
 			result += "bool recursive = true;\n";
 			result += "	if (val.GetUserTypeListSize() >= 5) {\n";
-			result += "	recursive = ToBool4(nullptr, *global, val.GetUserTypeList(val.GetUserTypeListSize() - 1)->ToString(), excuteData, &builder) == \"TRUE\" ? true : false;\n";
+			result += "	recursive = LoadData::ToBool4(nullptr, *global, val.GetUserTypeList(val.GetUserTypeListSize() - 1)->ToString(), excuteData, &builder) == \"TRUE\" ? true : false;\n";
 			result += "	}\n";
 
 			result += "	wiz::load_data::LoadData::ReplaceDataType1_2(*global, rex, sval, scondition, start_dir, excuteData, recursive, &builder);\n";
@@ -1196,7 +1209,7 @@ int main(int argc, char* argv[])
 
 						wiz::load_data::UserType _global;
 
-						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::ToBool4(nullptr, global,
+						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::LoadData::ToBool4(nullptr, global,
 							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global);
 
 						{
@@ -1208,7 +1221,7 @@ int main(int argc, char* argv[])
 								ut = &global;
 							}
 							else {
-								dir = wiz::load_data::ToBool4(nullptr, global, dir, ExcuteData(), &builder);
+								dir = wiz::load_data::LoadData::ToBool4(nullptr, global, dir, ExcuteData(), &builder);
 								ut = global.GetUserTypeItem(dir)[0];
 							}
 
@@ -1279,7 +1292,7 @@ int main(int argc, char* argv[])
 						lex_parallel = lex_thr_num;
 						parse_parallel = pivot_num + 1;
 
-						wiz::load_data::LoadData::LoadDataFromFile3(wiz::load_data::ToBool4(nullptr, global,
+						wiz::load_data::LoadData::LoadDataFromFile3(wiz::load_data::LoadData::ToBool4(nullptr, global,
 							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global, pivot_num, lex_thr_num);
 
 						{
@@ -1291,7 +1304,7 @@ int main(int argc, char* argv[])
 								ut = &global;
 							}
 							else {
-								dir = wiz::load_data::ToBool4(nullptr, global, dir, ExcuteData(), &builder);
+								dir = wiz::load_data::LoadData::ToBool4(nullptr, global, dir, ExcuteData(), &builder);
 								ut = global.GetUserTypeItem(dir)[0];
 							}
 
@@ -1444,7 +1457,7 @@ int main(int argc, char* argv[])
 
 						wiz::load_data::UserType _global;
 
-						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::ToBool4(nullptr, global,
+						wiz::load_data::LoadData::LoadDataFromFile(wiz::load_data::LoadData::ToBool4(nullptr, global,
 							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global);
 
 
@@ -1538,7 +1551,7 @@ int main(int argc, char* argv[])
 
 						wiz::load_data::UserType _global;
 
-						wiz::load_data::LoadData::LoadDataFromFile3(wiz::load_data::ToBool4(nullptr, global,
+						wiz::load_data::LoadData::LoadDataFromFile3(wiz::load_data::LoadData::ToBool4(nullptr, global,
 							RemoveQuoted(val->GetUserTypeList(0)->ToString()), ExcuteData(), &builder), _global, pivot_num, lex_thr_num);
 
 
