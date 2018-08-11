@@ -1,4 +1,4 @@
-# Move To https://github.com/ClauText/ClauToCpp
+# Moved To https://github.com/ClauText/ClauToCpp
 
 # ClauToCpp
       Convert ClauText to CPP
